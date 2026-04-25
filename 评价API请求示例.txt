@@ -1,0 +1,26 @@
+curl 'https://m.ctrip.com/restapi/soa2/33278/getHotelCommentList?_fxpcqlniredt=09031103210992774014&x-traceID=09031103210992774014-1776925357450-48063' \
+  -H 'accept: application/json' \
+  -H 'accept-language: zh-CN,zh;q=0.9,zh-TW;q=0.8,en-US;q=0.7,en;q=0.6' \
+  -H 'content-type: application/json' \
+  -b 'ibulocale=zh_cn; cookiePricesDisplayed=CNY; UBT_VID=1737354128316.f3ceAGcp6hIP; MKT_CKID=1737354129775.yaecm.l7si; IBU_showtotalamt=2; _RGUID=931e8f87-3ee2-40b0-a544-e082db557872; GUID=09031103210992774014; nfes_isSupportWebP=1; ibulanguage=ZH-CN; _jzqco=%7C%7C%7C%7C%7C1.621349418.1776913687706.1776925337751.1776925356742.1776925337751.1776925356742.0.0.0.11.11; _bfa=1.1737354128316.f3ceAGcp6hIP.1.1776925337453.1776925356217.7.11.10650171194' \
+  -H 'origin: https://hotels.ctrip.com' \
+  -H 'phantom-token: 1005-common-ofXw7SYqwpcYa8yqLJf3vkHiNTjqAElNvsqJGUvmhvzFYazy9AKskjbnEHZjm6J48W8gycOwH3ya5wMow5fRMFj9DRzdybUEsMjZpJQkWlZK4qKTNwgY0cjsPIFowcfRdQyGHyOGwazvtoYzUJqPianJXQy6HEMHY7bwPLRs8r1LjMYafy0j5hJcAKSzjqGjF6ElOyaEDsimhYbEL6YSoytEogYOBycMKdZiXUjoGjkgWZDyd7Io9w9cjLFwU8epgEP7I0gw1DihnRfE9OYqfyQsKqMitUjb3j3MWQDy5ENTYSUyZ1R4bYPUjL7WMPE3UJbNWzqjhfEFbID8KsAjObRUoWh3r6OrZQiSYGdKDhxh4KdsR3qyBni85yQAilTJFpE0lRGHYmUjDzi0SRSdw0PITBvT1iPMwAmjnfYSdjQ6wftEadw79K4pxGBYAPIZMYMMKtY69Ik8Id6r7bJngv6dyB5wMAJ7Swgqy3gyzoel8YGTYBoiqMjH7eq9ETQjDnEtZiHBeOkEZdyfDvs4Jm5eF1Y6QE3qv30jN1isqJfMEFTv0ayOHEMfEZ7vH5r94etGYHY4NyFQiF3YfgjsDEoZYntwdnjOUwtgYdtwmSEQnEfAK6Y0XyH5YTfi36idaWFzes3jXkiHYov1bWa9x6hv5neD8Ys1iZSYTsw88KZhWlYB7RZnyMyoTe7mEOsjb5W4HyzLRkaYcYhDI4DYQAEfmrPMKS1e7GEpDW0NWGXEQ8E0YqdWfXRkaJmhRNMy6ZWZ1ykQea9RNHWQmwLsygsy19KhDx7Ybtipsi6fv9SR4qyakWbpydoe5zRHtWf1Rp0vnHRqyGZx4Y0TwNSJtzi9aEN0Y6Gj1NI5Dj7UjpY7gWqJamwQ7YpGin6wz5RQ1E9qWnjgFySqeMYp5j9Gi75iF6JBfrsNxmhe8YzfJNaIT8ykzj7NwTXvZ3jSMx4pvTlJQY1twU5xdDw7aYS1JnBY3qrZYOawOSw9DwHajlAwNLv95jM6rMMKNtrpYbLwFyFFKMZYS4J9oWnzyqAYq5rcYfpKM9xzDIA0jkFigmiZhxDGWAsjPrAbx9AYLnwgmIDrTyQHxPLY4qjLSjm0W5jtDr4FE9LenYMfW1MEOGx3NRg5WNkwflJGdWHhRsqydBRLMROAvAaE4pW8fY46vlYqfx3ZE3SRG3RD1yZDWOSygleUmYnqEb4JmQJ94R7GeLYbgwzhJM0KhLRlXyQlWHlyUpeB9R6tWPhRSpvf7v5GjfA' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hotels.ctrip.com/' \
+  -H 'sec-ch-ua: "Google Chrome";v="147", "Not.A/Brand";v="8", "Chromium";v="147"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-site' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36' \
+  -H $'w-payload-source: 1.0.9@102\u0021NZjSmXCgqBbbKrVR+642OrOdOPAL+EbSGrNPKryaOSaVKENH+r4LGPGbOrK2+ET5+rApbbbpOST2+r4/KSqZOEq5bEkbKtb5+rbSKrA5KS4pKEVIKlTZOEbpObbpOSKZKSqLKr4RKSA2QPGSG2FyN2O5OPdjqbb=' \
+  -H 'x-ctx-country: CN' \
+  -H 'x-ctx-currency: CNY' \
+  -H 'x-ctx-locale: zh-CN' \
+  -H 'x-ctx-ubt-pageid: 10650171194' \
+  -H 'x-ctx-ubt-pvid: 11' \
+  -H 'x-ctx-ubt-sid: 7' \
+  -H 'x-ctx-ubt-vid: 1737354128316.f3ceAGcp6hIP' \
+  -H 'x-ctx-wclient-req: b956c95b81f3003614badd40dd09a829' \
+  --data-raw '{"hotelId":128045084,"pageIndex":1,"pageSize":50,"repeatComment":1,"needStaticInfo":false,"functionOptions":["integratedTopComment","ctripIntegratedExpediaTaList"],"head":{"cid":"1737354128316.f3ceAGcp6hIP","ctok":"","cver":"0","lang":"01","sid":"","syscode":"09","auth":"","xsid":"","extension":[{"name":"cityId","value":""},{"name":"checkIn","value":""},{"name":"checkOut","value":""}],"platform":"PC","bu":"HBU","group":"ctrip","aid":"","ouid":"","locale":"zh-CN","region":"CN","timezone":"8","currency":"CNY","pageId":"10650171194","vid":"1737354128316.f3ceAGcp6hIP","guid":"","isSSR":false}}'

@@ -1,0 +1,1495 @@
+{
+    "data": {
+        "imageDomain": "images4.c-ctrip.com",
+        "totalCount": 2059,
+        "repeatCommentCount": 324,
+        "filterList": [
+            {
+                "id": 1,
+                "name": "所有点评",
+                "commentCount": 2059,
+                "filterType": 1
+            },
+            {
+                "id": 2,
+                "name": "值得推荐",
+                "commentCount": 2038,
+                "filterType": 1
+            },
+            {
+                "id": 4,
+                "name": "有图",
+                "commentCount": 905,
+                "filterType": 1
+            },
+            {
+                "id": 5,
+                "name": "视频",
+                "commentCount": 32,
+                "filterType": 1
+            },
+            {
+                "id": 6,
+                "name": "有图/视频",
+                "commentCount": 920,
+                "filterType": 1
+            },
+            {
+                "id": 84,
+                "name": "前台热情",
+                "commentCount": 289,
+                "type": 3,
+                "filterType": 2
+            },
+            {
+                "id": 70,
+                "name": "早餐很棒",
+                "commentCount": 261,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 145,
+                "name": "有设计感",
+                "commentCount": 202,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 155,
+                "name": "江景壮观",
+                "commentCount": 185,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 12,
+                "name": "酒店装修棒",
+                "commentCount": 134,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 96,
+                "name": "近地铁站",
+                "commentCount": 64,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 72,
+                "name": "下午茶很棒",
+                "commentCount": 53,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 43,
+                "name": "健身房很棒",
+                "commentCount": 29,
+                "type": 1,
+                "filterType": 2
+            },
+            {
+                "id": 69731,
+                "name": "黄浦江尽收眼底",
+                "commentCount": 38,
+                "type": -1,
+                "filterType": 2
+            },
+            {
+                "id": 3,
+                "name": "差评",
+                "commentCount": 21,
+                "filterType": 1
+            }
+        ],
+        "commentList": [
+            {
+                "id": 1900578879,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "设施：位置方便 设施齐全 就在商场上盖\n\n卫生：还不错，清洁及时\n\n服务：张Michelle很热情 很及时 帮忙升级了一下\n\n赠送了温室花园的门票 很喜欢",
+                "createDate": "2026-04-06 16:41:54",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0235t12000s209e70AF36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231s12000s207tnnA6F8_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0236c12000s202uxf380A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0236y12000s202nyl2BA3_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232k12000s201r4tBDC3_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232o12000s20854sFB67_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235y12000s2008q260A7_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230x12000s200qzw7B36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234j12000s20185b346C_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华大床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-06 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c6n12000na9jeqj71E2_C_130_130_Q70.jpg",
+                    "commentCount": 16,
+                    "nickName": "M‍2‍2‍7‍8‍1‍7‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1915993555,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "带孩子来梅奔看演唱会，偶尔入住了木棉花酒店！非常棒！有欢迎水果，有下午茶，早餐也非常棒！酒店直通商业区综合体，吃饭遛娃很方便！到梅赛德斯奔驰看演唱会，步行十分钟就能抵达！孩子很喜欢，说以后一个月来一次，就当度假了！",
+                "createDate": "2026-04-19 14:46:52",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0236x12000s73qaczD5FF_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231y12000s73xd000E66_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234y12000s73l8at5096_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230512000s73xonwC39F_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-20 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/0Z86k120008f0zv2d391D_C_130_130_Q70.jpg",
+                    "commentCount": 4,
+                    "nickName": "t‍t‍b‍b‍t‍t‍b‍b‍1"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1917944221,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "大堂宾客经理Haron服务周到，房间很舒适，早餐非常nice，礼宾部还辛苦帮我收了三四十个快递，还都帮忙提前送到房间了！离世博文化公园，千古情都非常近。房间都是不能抽烟的，环境干净卫生。下次去还会选择这里，大品牌值得信赖。非常不错，值得体验！",
+                "createDate": "2026-04-20 19:43:18",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0230q12000s7l4a2t6080_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华大床房",
+                "travelType": 50,
+                "travelTypeText": "独自旅行",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-20 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h66o12000gwdom3bBFCC_C_130_130_Q70.jpg",
+                    "commentCount": 7,
+                    "nickName": "裴‍宝‍女"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1914672835,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "酒店宾客关系经理Haron服务很热情 。安排的房间很满意。 附近很热闹说实话， 这个价格这个酒店性价比已经非常非常好了， 周围商圈方便，几百米就有盒马大型超市 黄浦江畔也离这不远 强烈推荐入住这个酒店 大家可以看看 非常的好而且酒店的服务人员态度都非常不错；去过生日还帮忙布置房间和蛋糕",
+                "createDate": "2026-04-18 14:16:21",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0233n12000s6qz5sw7E1A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232h12000s6q8n7bBCFB_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232v12000s6qvecz0971_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 4.6,
+                "ratingMax": 5,
+                "commentLevel": "很好",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 70,
+                "travelTypeText": "情侣出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-18 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2112000na9j9p95174_C_130_130_Q70.jpg",
+                    "commentCount": 10,
+                    "nickName": "M‍2‍3‍9‍9‍8‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "很好",
+                    "ratingAll": "4.6",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1915294351,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "不得不说这是一次5.0分的体验，从订房间开始seven小姐姐就一直给热情服务。给我们升级了江景房，还送了一份早餐。酒店距离世博展览馆下楼就是给本次到孩子出行带来了太多方便。点的外卖到大堂的，服务生也给送到了房间。房间布置干净温馨设施都很新5星酒店不用怀疑。下次还会选择。再次感谢seven和酒店所有服务人员。👍👍👍",
+                "createDate": "2026-04-18 18:25:07",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0234212000s6tlzu77D47_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230t12000s6ttlm86F4A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231412000s6tgvt45984_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-18 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2112000na9j9p95174_C_130_130_Q70.jpg",
+                    "commentCount": 5,
+                    "nickName": "3‍0‍0‍6‍2‍3‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1904509527,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "据说是2025 年新开业的酒店，来上海旅游本想试试除了万豪系列和一些知名品牌的老字号以外的新酒店，网络上看着装修 大堂，房间格调都很好，健身房也很干净，结果来到入住的房间，房间有一股潮湿的味道，床边的智能控制居然可以整个调出来，一晚上只能靠着吹风机和咖啡机那边的插头充电，其次，花洒是坏的离谱，只能被迫用头顶的淋浴器，这也算是四五星级的高端酒店了吧，本想着应该不会差到哪里，但匹配的房间完全配不上这1000的价位，感觉同样的价格，其他的酒店比他还要好！建议贵公司还是重新审核每一间房间的配套和设施吧，毕竟顾客至上！",
+                "createDate": "2026-04-09 14:31:56",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0232q224x98wxuxuiC41C_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235n224x98wx1wc44559_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 2.7,
+                "ratingMax": 5,
+                "commentLevel": "",
+                "roomTypeName": "豪华大床房",
+                "travelType": 50,
+                "travelTypeText": "独自旅行",
+                "feedbackList": [
+                    {
+                        "content": "尊敬的鉴赏家，衷心感谢您选择上海世博木棉花凯悦臻选酒店下榻，并拨冗分享您的宝贵反馈。对于此次未能达到您的期望，我们深感抱歉。您的声音是我们改进的重要动力，管理团队已高度重视并立即展开核查，针对您反映的服务细节不足之处，我们正在进行针对性优化和员工培训，力求杜绝类似情况。我们真诚期待您未来能再次选择我们，并为您提供更好的居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-11 00:00:00",
+                        "ipLocation": "发布于辽宁",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h65t224x9060716fFD30_C_130_130_Q70.jpg",
+                    "commentCount": 47,
+                    "nickName": "S‍a‍S‍a‍T‍h‍e‍r‍e‍s‍a"
+                },
+                "videoList": [
+                    {
+                        "url": "https://video.c-ctrip.com/videos/230whk14x98v18cmc2897.mp4",
+                        "cover": "https://dimg04.c-ctrip.com/images/0205g12000s35ch792A5B_W_350_350_R5_Q70.jpg?proc=autoorient",
+                        "videoId": 8762023
+                    }
+                ],
+                "ratingInfo": {
+                    "commentLevel": "",
+                    "ratingAll": "2.7",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1912669335,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "环境：拥有地道的海派文化\n位置：靠近中华艺术宫，到梅赛德斯奔驰文化中心步行十分钟即可到达。\n服务：前台小姐姐很热情，由于今天下雨，礼宾部的同事第一时间迎接我为我打伞，点赞。\n下次还会选择这家酒店",
+                "createDate": "2026-04-16 17:29:17",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0237212000s5ya3leB689_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234k12000s5y4q7dFEE5_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235812000s5x2uis45B3_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景双床房",
+                "travelType": 10,
+                "travelTypeText": "商务出差",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-16 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2u12000na9jl4c55A2_C_130_130_Q70.jpg",
+                    "commentCount": 11,
+                    "nickName": "1‍3‍6‍6‍6‍6‍1‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1910631457,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "很方便的地理位置，Seven小姐姐满足了小朋友因为手术要提前入住的要求，在后续也提供了很多帮助，很有设计感的酒店，几乎完美，景色也很美好，看渡船满满地走，心里找到了安静……小南阳的套餐都很好吃，可以吃三个人，餐厅的员工都很努力，一群可爱的人……",
+                "createDate": "2026-04-14 18:40:15",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0236d12000s54fk9g6949_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230212000s54c8t7223E_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231e12000s54dev8EE0E_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230t12000s545i0j6D36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230712000s53mlym840C_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231i12000s545vav2CB0_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-15 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c3u12000na9j5gpFBB6_C_130_130_Q70.jpg",
+                    "commentCount": 5,
+                    "nickName": "1‍3‍8‍9‍5‍7‍5‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1902012643,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "很少点评，这次的酒店意外很满意，酒店很新，因为经常住五星级，性价比和硬件都满意，三个家庭出游帮我们安排在同一层，服务也很好到位，距离梅赛德斯看演唱会是真的方便，走到演唱会那边大概8-10分钟，地铁口走过去也就4-5分钟，停车场很多充电桩，与世博天地共用一个停车场，停地下二楼即可。连着来住两周，两周的周末都看演唱会",
+                "createDate": "2026-04-07 16:01:04",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0233j12000s2dhencEC64_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235z12000s2d98i259DA_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235l12000s2d6e3lFE53_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231j12000s2dj1ioF3B3_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 40,
+                "travelTypeText": "朋友出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-07 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h670120009eapivz7714_C_130_130_Q70.jpg",
+                    "commentCount": 11,
+                    "nickName": "顾‍长‍今"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1895712453,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-03-01 00:00:00",
+                "content": "为了看演唱会定的，离地铁站挺近，旁边就是商场，负一楼很多吃的，位置挺好的。商务风明显，但是因为比较新，所以各种设施，房间环境和清洁情况都很不错。早餐也是超预期的水平，但是服务人员过少了，而且好像没有泳池？我不知道这个是不是正常的。另外就是价格我觉得是略高的，应该还有20%的空间\n酒店照片没拍，看看Alin和王心凌吧",
+                "createDate": "2026-04-02 09:21:58",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0232212000s0ab4ia4C1D_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230o12000s0a21q51240_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230k12000s0a0v5t44C5_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0233c12000s0a0lf53FD5_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 4.8,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 70,
+                "travelTypeText": "情侣出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-02 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c6412000na9jnck75BB_C_130_130_Q70.jpg",
+                    "commentCount": 9,
+                    "nickName": "泰‍瑞‍萌"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "4.8",
+                    "ratingMax": 5
+                }
+            }
+        ],
+        "taCommentList": [
+            {
+                "id": 1900578879,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "设施：位置方便 设施齐全 就在商场上盖\n\n卫生：还不错，清洁及时\n\n服务：张Michelle很热情 很及时 帮忙升级了一下\n\n赠送了温室花园的门票 很喜欢",
+                "createDate": "2026-04-06 16:41:54",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0235t12000s209e70AF36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231s12000s207tnnA6F8_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0236c12000s202uxf380A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0236y12000s202nyl2BA3_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232k12000s201r4tBDC3_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232o12000s20854sFB67_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235y12000s2008q260A7_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230x12000s200qzw7B36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234j12000s20185b346C_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华大床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-06 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c6n12000na9jeqj71E2_C_130_130_Q70.jpg",
+                    "commentCount": 16,
+                    "nickName": "M‍2‍2‍7‍8‍1‍7‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1915993555,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "带孩子来梅奔看演唱会，偶尔入住了木棉花酒店！非常棒！有欢迎水果，有下午茶，早餐也非常棒！酒店直通商业区综合体，吃饭遛娃很方便！到梅赛德斯奔驰看演唱会，步行十分钟就能抵达！孩子很喜欢，说以后一个月来一次，就当度假了！",
+                "createDate": "2026-04-19 14:46:52",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0236x12000s73qaczD5FF_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231y12000s73xd000E66_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234y12000s73l8at5096_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230512000s73xonwC39F_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-20 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/0Z86k120008f0zv2d391D_C_130_130_Q70.jpg",
+                    "commentCount": 4,
+                    "nickName": "t‍t‍b‍b‍t‍t‍b‍b‍1"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1917944221,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "大堂宾客经理Haron服务周到，房间很舒适，早餐非常nice，礼宾部还辛苦帮我收了三四十个快递，还都帮忙提前送到房间了！离世博文化公园，千古情都非常近。房间都是不能抽烟的，环境干净卫生。下次去还会选择这里，大品牌值得信赖。非常不错，值得体验！",
+                "createDate": "2026-04-20 19:43:18",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0230q12000s7l4a2t6080_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华大床房",
+                "travelType": 50,
+                "travelTypeText": "独自旅行",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-20 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h66o12000gwdom3bBFCC_C_130_130_Q70.jpg",
+                    "commentCount": 7,
+                    "nickName": "裴‍宝‍女"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1914672835,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "酒店宾客关系经理Haron服务很热情 。安排的房间很满意。 附近很热闹说实话， 这个价格这个酒店性价比已经非常非常好了， 周围商圈方便，几百米就有盒马大型超市 黄浦江畔也离这不远 强烈推荐入住这个酒店 大家可以看看 非常的好而且酒店的服务人员态度都非常不错；去过生日还帮忙布置房间和蛋糕",
+                "createDate": "2026-04-18 14:16:21",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0233n12000s6qz5sw7E1A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232h12000s6q8n7bBCFB_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232v12000s6qvecz0971_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 4.6,
+                "ratingMax": 5,
+                "commentLevel": "很好",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 70,
+                "travelTypeText": "情侣出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-18 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2112000na9j9p95174_C_130_130_Q70.jpg",
+                    "commentCount": 10,
+                    "nickName": "M‍2‍3‍9‍9‍8‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "很好",
+                    "ratingAll": "4.6",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1915294351,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "不得不说这是一次5.0分的体验，从订房间开始seven小姐姐就一直给热情服务。给我们升级了江景房，还送了一份早餐。酒店距离世博展览馆下楼就是给本次到孩子出行带来了太多方便。点的外卖到大堂的，服务生也给送到了房间。房间布置干净温馨设施都很新5星酒店不用怀疑。下次还会选择。再次感谢seven和酒店所有服务人员。👍👍👍",
+                "createDate": "2026-04-18 18:25:07",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0234212000s6tlzu77D47_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230t12000s6ttlm86F4A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231412000s6tgvt45984_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-18 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2112000na9j9p95174_C_130_130_Q70.jpg",
+                    "commentCount": 5,
+                    "nickName": "3‍0‍0‍6‍2‍3‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1904509527,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "据说是2025 年新开业的酒店，来上海旅游本想试试除了万豪系列和一些知名品牌的老字号以外的新酒店，网络上看着装修 大堂，房间格调都很好，健身房也很干净，结果来到入住的房间，房间有一股潮湿的味道，床边的智能控制居然可以整个调出来，一晚上只能靠着吹风机和咖啡机那边的插头充电，其次，花洒是坏的离谱，只能被迫用头顶的淋浴器，这也算是四五星级的高端酒店了吧，本想着应该不会差到哪里，但匹配的房间完全配不上这1000的价位，感觉同样的价格，其他的酒店比他还要好！建议贵公司还是重新审核每一间房间的配套和设施吧，毕竟顾客至上！",
+                "createDate": "2026-04-09 14:31:56",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0232q224x98wxuxuiC41C_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235n224x98wx1wc44559_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 2.7,
+                "ratingMax": 5,
+                "commentLevel": "",
+                "roomTypeName": "豪华大床房",
+                "travelType": 50,
+                "travelTypeText": "独自旅行",
+                "feedbackList": [
+                    {
+                        "content": "尊敬的鉴赏家，衷心感谢您选择上海世博木棉花凯悦臻选酒店下榻，并拨冗分享您的宝贵反馈。对于此次未能达到您的期望，我们深感抱歉。您的声音是我们改进的重要动力，管理团队已高度重视并立即展开核查，针对您反映的服务细节不足之处，我们正在进行针对性优化和员工培训，力求杜绝类似情况。我们真诚期待您未来能再次选择我们，并为您提供更好的居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-11 00:00:00",
+                        "ipLocation": "发布于辽宁",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h65t224x9060716fFD30_C_130_130_Q70.jpg",
+                    "commentCount": 47,
+                    "nickName": "S‍a‍S‍a‍T‍h‍e‍r‍e‍s‍a"
+                },
+                "videoList": [
+                    {
+                        "url": "https://video.c-ctrip.com/videos/230whk14x98v18cmc2897.mp4",
+                        "cover": "https://dimg04.c-ctrip.com/images/0205g12000s35ch792A5B_W_350_350_R5_Q70.jpg?proc=autoorient",
+                        "videoId": 8762023
+                    }
+                ],
+                "ratingInfo": {
+                    "commentLevel": "",
+                    "ratingAll": "2.7",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1912669335,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "环境：拥有地道的海派文化\n位置：靠近中华艺术宫，到梅赛德斯奔驰文化中心步行十分钟即可到达。\n服务：前台小姐姐很热情，由于今天下雨，礼宾部的同事第一时间迎接我为我打伞，点赞。\n下次还会选择这家酒店",
+                "createDate": "2026-04-16 17:29:17",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0237212000s5ya3leB689_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234k12000s5y4q7dFEE5_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235812000s5x2uis45B3_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景双床房",
+                "travelType": 10,
+                "travelTypeText": "商务出差",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-16 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2u12000na9jl4c55A2_C_130_130_Q70.jpg",
+                    "commentCount": 11,
+                    "nickName": "1‍3‍6‍6‍6‍6‍1‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1910631457,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "很方便的地理位置，Seven小姐姐满足了小朋友因为手术要提前入住的要求，在后续也提供了很多帮助，很有设计感的酒店，几乎完美，景色也很美好，看渡船满满地走，心里找到了安静……小南阳的套餐都很好吃，可以吃三个人，餐厅的员工都很努力，一群可爱的人……",
+                "createDate": "2026-04-14 18:40:15",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0236d12000s54fk9g6949_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230212000s54c8t7223E_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231e12000s54dev8EE0E_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230t12000s545i0j6D36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230712000s53mlym840C_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231i12000s545vav2CB0_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-15 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c3u12000na9j5gpFBB6_C_130_130_Q70.jpg",
+                    "commentCount": 5,
+                    "nickName": "1‍3‍8‍9‍5‍7‍5‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1902012643,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "很少点评，这次的酒店意外很满意，酒店很新，因为经常住五星级，性价比和硬件都满意，三个家庭出游帮我们安排在同一层，服务也很好到位，距离梅赛德斯看演唱会是真的方便，走到演唱会那边大概8-10分钟，地铁口走过去也就4-5分钟，停车场很多充电桩，与世博天地共用一个停车场，停地下二楼即可。连着来住两周，两周的周末都看演唱会",
+                "createDate": "2026-04-07 16:01:04",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0233j12000s2dhencEC64_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235z12000s2d98i259DA_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235l12000s2d6e3lFE53_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231j12000s2dj1ioF3B3_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 40,
+                "travelTypeText": "朋友出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-07 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h670120009eapivz7714_C_130_130_Q70.jpg",
+                    "commentCount": 11,
+                    "nickName": "顾‍长‍今"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1895712453,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-03-01 00:00:00",
+                "content": "为了看演唱会定的，离地铁站挺近，旁边就是商场，负一楼很多吃的，位置挺好的。商务风明显，但是因为比较新，所以各种设施，房间环境和清洁情况都很不错。早餐也是超预期的水平，但是服务人员过少了，而且好像没有泳池？我不知道这个是不是正常的。另外就是价格我觉得是略高的，应该还有20%的空间\n酒店照片没拍，看看Alin和王心凌吧",
+                "createDate": "2026-04-02 09:21:58",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0232212000s0ab4ia4C1D_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230o12000s0a21q51240_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230k12000s0a0v5t44C5_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0233c12000s0a0lf53FD5_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 4.8,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 70,
+                "travelTypeText": "情侣出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-02 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c6412000na9jnck75BB_C_130_130_Q70.jpg",
+                    "commentCount": 9,
+                    "nickName": "泰‍瑞‍萌"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "4.8",
+                    "ratingMax": 5
+                }
+            }
+        ],
+        "unUsefulCommentList": [
+            {
+                "id": 1900578879,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "设施：位置方便 设施齐全 就在商场上盖\n\n卫生：还不错，清洁及时\n\n服务：张Michelle很热情 很及时 帮忙升级了一下\n\n赠送了温室花园的门票 很喜欢",
+                "createDate": "2026-04-06 16:41:54",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0235t12000s209e70AF36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231s12000s207tnnA6F8_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0236c12000s202uxf380A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0236y12000s202nyl2BA3_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232k12000s201r4tBDC3_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232o12000s20854sFB67_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235y12000s2008q260A7_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230x12000s200qzw7B36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234j12000s20185b346C_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华大床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-06 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c6n12000na9jeqj71E2_C_130_130_Q70.jpg",
+                    "commentCount": 16,
+                    "nickName": "M‍2‍2‍7‍8‍1‍7‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1915993555,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "带孩子来梅奔看演唱会，偶尔入住了木棉花酒店！非常棒！有欢迎水果，有下午茶，早餐也非常棒！酒店直通商业区综合体，吃饭遛娃很方便！到梅赛德斯奔驰看演唱会，步行十分钟就能抵达！孩子很喜欢，说以后一个月来一次，就当度假了！",
+                "createDate": "2026-04-19 14:46:52",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0236x12000s73qaczD5FF_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231y12000s73xd000E66_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234y12000s73l8at5096_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230512000s73xonwC39F_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-20 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/0Z86k120008f0zv2d391D_C_130_130_Q70.jpg",
+                    "commentCount": 4,
+                    "nickName": "t‍t‍b‍b‍t‍t‍b‍b‍1"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1917944221,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "大堂宾客经理Haron服务周到，房间很舒适，早餐非常nice，礼宾部还辛苦帮我收了三四十个快递，还都帮忙提前送到房间了！离世博文化公园，千古情都非常近。房间都是不能抽烟的，环境干净卫生。下次去还会选择这里，大品牌值得信赖。非常不错，值得体验！",
+                "createDate": "2026-04-20 19:43:18",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0230q12000s7l4a2t6080_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华大床房",
+                "travelType": 50,
+                "travelTypeText": "独自旅行",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-20 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h66o12000gwdom3bBFCC_C_130_130_Q70.jpg",
+                    "commentCount": 7,
+                    "nickName": "裴‍宝‍女"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1914672835,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "酒店宾客关系经理Haron服务很热情 。安排的房间很满意。 附近很热闹说实话， 这个价格这个酒店性价比已经非常非常好了， 周围商圈方便，几百米就有盒马大型超市 黄浦江畔也离这不远 强烈推荐入住这个酒店 大家可以看看 非常的好而且酒店的服务人员态度都非常不错；去过生日还帮忙布置房间和蛋糕",
+                "createDate": "2026-04-18 14:16:21",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0233n12000s6qz5sw7E1A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232h12000s6q8n7bBCFB_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0232v12000s6qvecz0971_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 4.6,
+                "ratingMax": 5,
+                "commentLevel": "很好",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 70,
+                "travelTypeText": "情侣出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-18 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2112000na9j9p95174_C_130_130_Q70.jpg",
+                    "commentCount": 10,
+                    "nickName": "M‍2‍3‍9‍9‍8‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "很好",
+                    "ratingAll": "4.6",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1915294351,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "不得不说这是一次5.0分的体验，从订房间开始seven小姐姐就一直给热情服务。给我们升级了江景房，还送了一份早餐。酒店距离世博展览馆下楼就是给本次到孩子出行带来了太多方便。点的外卖到大堂的，服务生也给送到了房间。房间布置干净温馨设施都很新5星酒店不用怀疑。下次还会选择。再次感谢seven和酒店所有服务人员。👍👍👍",
+                "createDate": "2026-04-18 18:25:07",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0234212000s6tlzu77D47_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230t12000s6ttlm86F4A_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231412000s6tgvt45984_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-18 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2112000na9j9p95174_C_130_130_Q70.jpg",
+                    "commentCount": 5,
+                    "nickName": "3‍0‍0‍6‍2‍3‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1904509527,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "据说是2025 年新开业的酒店，来上海旅游本想试试除了万豪系列和一些知名品牌的老字号以外的新酒店，网络上看着装修 大堂，房间格调都很好，健身房也很干净，结果来到入住的房间，房间有一股潮湿的味道，床边的智能控制居然可以整个调出来，一晚上只能靠着吹风机和咖啡机那边的插头充电，其次，花洒是坏的离谱，只能被迫用头顶的淋浴器，这也算是四五星级的高端酒店了吧，本想着应该不会差到哪里，但匹配的房间完全配不上这1000的价位，感觉同样的价格，其他的酒店比他还要好！建议贵公司还是重新审核每一间房间的配套和设施吧，毕竟顾客至上！",
+                "createDate": "2026-04-09 14:31:56",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0232q224x98wxuxuiC41C_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235n224x98wx1wc44559_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 2.7,
+                "ratingMax": 5,
+                "commentLevel": "",
+                "roomTypeName": "豪华大床房",
+                "travelType": 50,
+                "travelTypeText": "独自旅行",
+                "feedbackList": [
+                    {
+                        "content": "尊敬的鉴赏家，衷心感谢您选择上海世博木棉花凯悦臻选酒店下榻，并拨冗分享您的宝贵反馈。对于此次未能达到您的期望，我们深感抱歉。您的声音是我们改进的重要动力，管理团队已高度重视并立即展开核查，针对您反映的服务细节不足之处，我们正在进行针对性优化和员工培训，力求杜绝类似情况。我们真诚期待您未来能再次选择我们，并为您提供更好的居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-11 00:00:00",
+                        "ipLocation": "发布于辽宁",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h65t224x9060716fFD30_C_130_130_Q70.jpg",
+                    "commentCount": 47,
+                    "nickName": "S‍a‍S‍a‍T‍h‍e‍r‍e‍s‍a"
+                },
+                "videoList": [
+                    {
+                        "url": "https://video.c-ctrip.com/videos/230whk14x98v18cmc2897.mp4",
+                        "cover": "https://dimg04.c-ctrip.com/images/0205g12000s35ch792A5B_W_350_350_R5_Q70.jpg?proc=autoorient",
+                        "videoId": 8762023
+                    }
+                ],
+                "ratingInfo": {
+                    "commentLevel": "",
+                    "ratingAll": "2.7",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1912669335,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "环境：拥有地道的海派文化\n位置：靠近中华艺术宫，到梅赛德斯奔驰文化中心步行十分钟即可到达。\n服务：前台小姐姐很热情，由于今天下雨，礼宾部的同事第一时间迎接我为我打伞，点赞。\n下次还会选择这家酒店",
+                "createDate": "2026-04-16 17:29:17",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0237212000s5ya3leB689_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0234k12000s5y4q7dFEE5_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235812000s5x2uis45B3_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景双床房",
+                "travelType": 10,
+                "travelTypeText": "商务出差",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-16 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c2u12000na9jl4c55A2_C_130_130_Q70.jpg",
+                    "commentCount": 11,
+                    "nickName": "1‍3‍6‍6‍6‍6‍1‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1910631457,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "很方便的地理位置，Seven小姐姐满足了小朋友因为手术要提前入住的要求，在后续也提供了很多帮助，很有设计感的酒店，几乎完美，景色也很美好，看渡船满满地走，心里找到了安静……小南阳的套餐都很好吃，可以吃三个人，餐厅的员工都很努力，一群可爱的人……",
+                "createDate": "2026-04-14 18:40:15",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0236d12000s54fk9g6949_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230212000s54c8t7223E_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231e12000s54dev8EE0E_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230t12000s545i0j6D36_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230712000s53mlym840C_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231i12000s545vav2CB0_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 30,
+                "travelTypeText": "家庭亲子",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-15 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c3u12000na9j5gpFBB6_C_130_130_Q70.jpg",
+                    "commentCount": 5,
+                    "nickName": "1‍3‍8‍9‍5‍7‍5‍*‍*‍*‍*"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1902012643,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-04-01 00:00:00",
+                "content": "很少点评，这次的酒店意外很满意，酒店很新，因为经常住五星级，性价比和硬件都满意，三个家庭出游帮我们安排在同一层，服务也很好到位，距离梅赛德斯看演唱会是真的方便，走到演唱会那边大概8-10分钟，地铁口走过去也就4-5分钟，停车场很多充电桩，与世博天地共用一个停车场，停地下二楼即可。连着来住两周，两周的周末都看演唱会",
+                "createDate": "2026-04-07 16:01:04",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0233j12000s2dhencEC64_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235z12000s2d98i259DA_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0235l12000s2d6e3lFE53_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0231j12000s2dj1ioF3B3_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 5,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "豪华双床房",
+                "travelType": 40,
+                "travelTypeText": "朋友出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-07 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/1h670120009eapivz7714_C_130_130_Q70.jpg",
+                    "commentCount": 11,
+                    "nickName": "顾‍长‍今"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "5.0",
+                    "ratingMax": 5
+                }
+            },
+            {
+                "id": 1895712453,
+                "hotelId": 128045084,
+                "usefulCount": 0,
+                "source": 1,
+                "language": "CN",
+                "canMarkUseful": true,
+                "checkInDate": "2026-03-01 00:00:00",
+                "content": "为了看演唱会定的，离地铁站挺近，旁边就是商场，负一楼很多吃的，位置挺好的。商务风明显，但是因为比较新，所以各种设施，房间环境和清洁情况都很不错。早餐也是超预期的水平，但是服务人员过少了，而且好像没有泳池？我不知道这个是不是正常的。另外就是价格我觉得是略高的，应该还有20%的空间\n酒店照片没拍，看看Alin和王心凌吧",
+                "createDate": "2026-04-02 09:21:58",
+                "imageList": [
+                    "https://images4.c-ctrip.com/images/0232212000s0ab4ia4C1D_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230o12000s0a21q51240_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0230k12000s0a0v5t44C5_R_150_150_R5_Q70_D.jpg",
+                    "https://images4.c-ctrip.com/images/0233c12000s0a0lf53FD5_R_150_150_R5_Q70_D.jpg"
+                ],
+                "rating": 4.8,
+                "ratingMax": 5,
+                "commentLevel": "超棒",
+                "roomTypeName": "尊贵江景大床房",
+                "travelType": 70,
+                "travelTypeText": "情侣出游",
+                "feedbackList": [
+                    {
+                        "content": "亲爱的鉴赏家，感谢您选择上海世博木棉花凯悦臻选酒店作为出行首选，并在百忙之中抽空对我们提供的服务给予认可。我们致力于为各位品味不凡的鉴赏家提供别具一格的居停体验，期待与您下次再会，共同翻开城市篇章，续写臻选旅途记忆，沉浸感受全新海派艺文居停体验。",
+                        "language": "CN",
+                        "type": 3,
+                        "createDate": "2026-04-02 00:00:00",
+                        "ipLocation": "发布于上海",
+                        "videoList": []
+                    }
+                ],
+                "userInfo": {
+                    "headPictureUrl": "https://dimg04.c-ctrip.com/images/27c6412000na9jnck75BB_C_130_130_Q70.jpg",
+                    "commentCount": 9,
+                    "nickName": "泰‍瑞‍萌"
+                },
+                "videoList": [],
+                "ratingInfo": {
+                    "commentLevel": "超棒",
+                    "ratingAll": "4.8",
+                    "ratingMax": 5
+                }
+            }
+        ],
+        "allCommentCount": 2059,
+        "totalCountForPage": 1735,
+        "filteredOutCommentInfo": {
+            "collapsedCommentCount": 324,
+            "commentsBeforeDecorationCount": 0,
+            "commentsDuringTrialOperationCount": 0
+        },
+        "aiSummaryFilterListInfo": [
+            {
+                "id": "6",
+                "name": "有图/视频",
+                "commentCount": 920,
+                "type": 1
+            },
+            {
+                "id": "3",
+                "name": "差评",
+                "commentCount": 21,
+                "type": 1
+            }
+        ]
+    },
+    "ResponseStatus": {
+        "Timestamp": "/Date(1776925357849+0800)/",
+        "Ack": "Success",
+        "Errors": [],
+        "Build": "",
+        "Version": "1.0.0",
+        "Extension": [
+            {
+                "Id": "CLOGGING_TRACE_ID",
+                "Value": ""
+            },
+            {
+                "Id": "TraceLogId",
+                "Value": "100025527-0a39d96c-493590-1392874"
+            },
+            {
+                "Id": "XRequestId",
+                "Value": "65eb6970-ba4c-4d74-b622-541381306f07"
+            },
+            {
+                "Id": "RootMessageId",
+                "Value": "100025527-0a39d96c-493590-1392877"
+            }
+        ]
+    }
+}

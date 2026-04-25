@@ -1,0 +1,380 @@
+---
+alwaysApply: false
+description: 项目功能开发需要遵守的开发规则
+---
+# 携程酒店评价监控系统 - 技术方案
+
+## 项目开发规则
+
+本章节定义项目后续迭代开发必须遵循的规范，确保代码一致性、可维护性和可扩展性。
+
+### 一、系统架构规则
+
+#### 1.1 分层架构原则
+
+系统采用严格的三层架构，各层职责明确，禁止跨层调用：
+
+| 层级 | 目录 | 职责 | 禁止事项 |
+|------|------|------|----------|
+| **表现层** | `src/app/`, `src/components/` | UI渲染、用户交互、API路由入口 | 直接调用Prisma、包含业务逻辑 |
+| **服务层** | `src/services/` | 业务逻辑、数据处理、外部服务集成 | 直接操作DOM、包含UI代码 |
+| **数据层** | `src/lib/prisma.ts`, `prisma/schema.prisma` | 数据持久化、ORM映射 | 包含业务逻辑、直接暴露给表现层 |
+
+#### 1.2 API Route 规范
+
+- **命名规范**：API路由文件统一命名为 `route.ts`
+- **RESTful设计**：
+  - `GET` → 查询操作
+  - `POST` → 创建操作
+  - `PUT` → 更新操作
+  - `DELETE` → 删除操作
+- **响应格式**：统一使用 `NextResponse.json()`，包含 `success`、`data`、`error` 字段
+- **错误处理**：所有API必须包含try-catch，返回标准错误响应
+
+```typescript
+// 标准API响应结构
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+// 标准错误响应
+return NextResponse.json({ success: false, error: "错误描述" }, { status: 400 });
+```
+
+#### 1.3 服务层模块化
+
+- **模块划分**：按功能域划分服务模块（crawler、scheduler、logger）
+- **单例模式**：浏览器实例、Prisma客户端、调度器任务均采用单例管理
+- **依赖注入**：服务间依赖通过函数参数传递，禁止硬编码依赖
+
+#### 1.4 数据库字段映射
+
+- **命名约定**：数据库字段使用 `snake_case`，通过 `@map()` 映射
+- **索引策略**：高频查询字段必须添加索引（如 `hotelId`、`reviewDate`）
+- **级联删除**：关联数据使用 `onDelete: Cascade` 或 `SetNull`
+
+---
+
+### 二、爬虫规范
+
+#### 2.1 浏览器管理规范
+
+- **单例浏览器**：全局维护单一Browser实例，避免资源浪费
+- **页面复用**：Page实例可复用，关闭后重新创建
+- **资源释放**：每次拉取完成后必须调用 `closeBrowser()`
+
+```typescript
+// 浏览器生命周期管理
+let browser: Browser | null = null;  // 全局单例
+let page: Page | null = null;        // 可复用页面
+
+// 强制释放时机
+await closeBrowser();  // 每次fetch完成后
+```
+
+#### 2.2 CDP拦截规范
+
+- **协议选择**：使用 `Fetch` 协议而非 `Network` 协议（更稳定）
+- **URL匹配**：使用通配符模式匹配API请求
+- **请求拦截**：拦截请求阶段修改请求参数（pageSize、orderBy）
+- **响应解析**：必须处理 `base64Encoded` 编码
+
+```typescript
+// CDP拦截配置
+await client.send("Fetch.enable", {
+  patterns: [
+    { urlPattern: "*getHotelCommentList*", requestStage: "Response" },
+    { urlPattern: "*commentList*", requestStage: "Response" },
+  ],
+});
+
+// 请求参数修改规范
+const TARGET_PAGE_SIZE = 50;
+if (bodyJson.pageSize && bodyJson.pageSize !== TARGET_PAGE_SIZE) {
+  bodyJson.pageSize = TARGET_PAGE_SIZE;
+}
+if (bodyJson.orderBy !== 1) {
+  bodyJson.orderBy = 1;  // 按最新评价排序
+}
+```
+
+#### 2.3 反检测策略
+
+- **注入时机**：使用 `evaluateOnNewDocument` 在页面加载前注入
+- **关键属性**：必须覆盖 `navigator.webdriver`、`navigator.plugins`、`window.chrome`
+- **User-Agent**：设置真实Chrome UA，版本号需与Puppeteer内置Chrome版本匹配
+
+```typescript
+// 必须注入的反检测脚本
+const ANTI_DETECT_SCRIPT = `
+  Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+  Object.defineProperty(navigator, 'plugins', { get: () => [1,2,3,4,5] });
+  window.chrome = { runtime: {} };
+`;
+```
+
+#### 2.4 数据解析规范
+
+- **字段映射**：携程API字段 → 系统字段，统一在 `parseCommentListResponse` 函数处理
+- **空值处理**：所有可选字段必须提供默认值或 `null`
+- **原始数据**：保留 `rawJson` 用于后续分析
+
+```typescript
+// 字段映射规范
+commentId: String(item.id),           // 必转String
+rating: item.rating || 0,             // 默认值0
+content: item.content || "",          // 默认值空字符串
+roomName: item.roomTypeName || null,  // 可选字段null
+```
+
+#### 2.5 增量拉取策略
+
+- **判断逻辑**：首次拉取（本地无数据）→ 多页拉取；后续 → 单页增量
+- **停止条件**：遇到已存在 `commentId` 时停止
+- **并发控制**：全局维护 `isFetching` 标志，禁止并发拉取
+
+```typescript
+// 增量拉取判断
+const existingCount = await prisma.review.count({ where: { hotelId } });
+const shouldFetchMultiplePages = existingCount === 0;
+const targetPages = shouldFetchMultiplePages ? INITIAL_FETCH_PAGES : 1;
+```
+
+---
+
+### 三、UI设计规范
+
+#### 3.1 设计系统
+
+- **组件库**：统一使用 shadcn/ui（基于 Radix UI）
+- **设计原则**：简洁、功能导向、无过度装饰
+- **响应式**：支持桌面端（≥1024px），暂不支持移动端
+
+#### 3.2 色彩系统
+
+使用 CSS 变量定义语义化色彩，支持亮色/暗色主题切换：
+
+| 变量 | 用途 | 亮色值 | 暗色值 |
+|------|------|--------|--------|
+| `--background` | 页面背景 | `#ffffff` | `#0f172a` |
+| `--foreground` | 文字颜色 | `#0f172a` | `#f8fafc` |
+| `--primary` | 主色调（按钮、链接） | `#3b82f6` | `#3b82f6` |
+| `--destructive` | 危险操作（删除） | `#ef4444` | `#ef4444` |
+| `--muted` | 次级背景 | `#f1f5f9` | `#334155` |
+| `--border` | 边框颜色 | `#e2e8f0` | `#334155` |
+
+#### 3.3 评分色彩映射
+
+| 评分范围 | 标签 | 背景色 | 文字色 |
+|----------|------|--------|--------|
+| 4-5星 | 好评 | `bg-green-100` | `text-green-700` |
+| 3星 | 中评 | `bg-yellow-100` | `text-yellow-700` |
+| 1-2星 | 差评 | `bg-red-100` | `text-red-700` |
+
+#### 3.4 图表色彩
+
+- **好评**：`#22c55e`（绿色）
+- **中评**：`#f59e0b`（橙色）
+- **差评**：`#ef4444`（红色）
+- **评分趋势线**：`#3b82f6`（蓝色）
+
+---
+
+### 四、前端风格规范
+
+#### 4.1 组件结构规范
+
+- **目录划分**：
+  - `src/components/ui/` → 基础UI组件（shadcn/ui）
+  - `src/components/layout/` → 布局组件（Sidebar、AppLayout）
+- **命名规范**：组件文件使用 `kebab-case.tsx`，导出使用 `PascalCase`
+- **组件职责**：单一职责，禁止在UI组件中包含API调用逻辑
+
+#### 4.2 页面组件规范
+
+- **客户端组件**：所有页面必须标记 `"use client"`
+- **状态管理**：使用 `useState` 管理本地状态，禁止引入Redux等全局状态库
+- **数据获取**：使用 `fetch` 调用API，在 `useEffect` 中初始化数据
+
+```typescript
+// 页面组件标准结构
+"use client";
+import { useState, useEffect } from "react";
+import { AppLayout } from "@/components/layout/app-layout";
+
+export default function PageName() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => { ... };
+  
+  return <AppLayout>...</AppLayout>;
+}
+```
+
+#### 4.3 样式规范
+
+- **CSS方案**：Tailwind CSS 原子化样式，禁止自定义CSS类
+- **样式组合**：使用 `cn()` 函数合并样式类
+- **间距系统**：统一使用 Tailwind 间距单位（`p-6`、`gap-4`、`space-y-6`）
+- **圆角**：统一使用 `rounded-xl`（Card）或 `rounded-md`（Button/Input）
+
+```typescript
+// 样式组合示例
+import { cn } from "@/lib/utils";
+
+<div className={cn(
+  "rounded-xl border bg-card text-card-foreground shadow",
+  className  // 允许外部覆盖
+)} />
+```
+
+#### 4.4 布局规范
+
+- **侧边栏宽度**：固定 `w-56`（224px）
+- **主内容区**：`ml-56` 左边距 + `container mx-auto p-6` 内边距
+- **卡片间距**：`space-y-6` 垂直间距
+- **网格布局**：`grid gap-4 md:grid-cols-2 lg:grid-cols-4`
+
+---
+
+### 五、代码开发结构规范
+
+#### 5.1 目录结构规范
+
+```
+src/
+├── app/           # Next.js App Router（页面 + API）
+│   ├── api/       # API Routes，按资源划分
+│   └── [page]/    # 页面，每个页面独立目录
+├── components/    # React组件
+│   ├── ui/        # 基础UI组件（shadcn/ui）
+│   └── layout/    # 布局组件
+├── lib/           # 工具库（无业务逻辑）
+│   ├── prisma.ts  # Prisma单例
+│   ├── utils.ts   # 通用工具函数
+│   └── validators.ts  # Zod验证器
+├── services/      # 服务层（业务逻辑）
+│   ├── crawler/   # 爬虫服务
+│   ├── scheduler/ # 定时调度
+│   └── logger/    # 日志服务
+└── types/         # TypeScript类型定义
+    └── index.ts   # 统一导出所有类型
+```
+
+#### 5.2 类型定义规范
+
+- **集中管理**：所有类型定义集中在 `src/types/index.ts`
+- **命名规范**：接口使用 `PascalCase`，属性使用 `camelCase`
+- **数据库映射**：类型定义与Prisma Schema保持一致
+
+```typescript
+// 类型定义示例
+export interface Hotel {
+  id: number;
+  hotelId: string;      // 对应 Prisma @map("hotel_id")
+  hotelName: string;    // 对应 Prisma @map("hotel_name")
+  ...
+}
+```
+
+#### 5.3 导入规范
+
+- **路径别名**：统一使用 `@/` 别名引用src目录
+- **导入顺序**：
+  1. 外部库（React、Next.js）
+  2. 内部组件（`@/components`）
+  3. 内部工具（`@/lib`）
+  4. 内部服务（`@/services`）
+  5. 类型定义（`@/types`）
+
+```typescript
+// 导入顺序示例
+import { useState, useEffect } from "react";           // 1. 外部库
+import { AppLayout } from "@/components/layout/app-layout";  // 2. 内部组件
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";                      // 3. 内部工具
+import { fetchReviews } from "@/services/crawler";     // 4. 内部服务
+import { Hotel, Review } from "@/types";               // 5. 类型定义
+```
+
+#### 5.4 错误处理规范
+
+- **API层**：统一try-catch，返回标准错误响应
+- **服务层**：抛出错误，由API层捕获处理
+- **前端层**：显示错误信息，不抛出异常
+
+```typescript
+// API层错误处理
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // 业务逻辑
+    return NextResponse.json({ success: true, data });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+```
+
+#### 5.5 日志规范
+
+- **日志模块**：使用 `createLogger(moduleName)` 创建模块日志器
+- **日志级别**：`info`、`warn`、`error`、`debug`
+- **日志格式**：`[timestamp] [LEVEL] [module] message`
+
+```typescript
+// 日志使用示例
+import { createLogger } from "@/services/logger";
+const log = createLogger("Fetcher");
+
+log.info("开始拉取评价");
+log.error(`拉取失败: ${err.message}`);
+```
+
+#### 5.6 常量管理规范
+
+- **定义位置**：服务层顶部定义常量
+- **命名规范**：使用 `UPPER_SNAKE_CASE`
+- **禁止硬编码**：所有配置值必须定义为常量
+
+```typescript
+// 常量定义示例
+const COMMENT_API_PATTERN = /getHotelCommentList|commentList/i;
+const INITIAL_FETCH_PAGES = 5;
+const MAX_LOGS = 1000;
+```
+
+---
+
+### 六、后续迭代开发指引
+
+#### 6.1 新增功能开发流程
+
+1. **类型定义**：在 `src/types/index.ts` 添加新类型
+2. **数据库变更**：修改 `prisma/schema.prisma`，执行 `prisma db push`
+3. **服务层实现**：在 `src/services/` 添加业务逻辑
+4. **API层实现**：在 `src/app/api/` 添加路由处理
+5. **前端实现**：在 `src/app/` 添加页面，在 `src/components/` 添加组件
+
+#### 6.2 禁止事项
+
+- ❌ 在API Route中直接操作浏览器
+- ❌ 在前端组件中包含业务逻辑
+- ❌ 硬编码API URL或数据库字段名
+- ❌ 跳过类型定义直接使用 `any`
+- ❌ 在服务层引入UI组件依赖
+
+#### 6.3 代码审查要点
+
+- 分层架构是否正确（表现层→服务层→数据层）
+- 类型定义是否完整
+- 错误处理是否覆盖所有异常路径
+- 日志记录是否充分
+- 常量是否集中管理

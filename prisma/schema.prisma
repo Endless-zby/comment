@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  id            Int       @id @default(autoincrement())
+  hotelId       String    @unique @map("hotel_id")
+  hotelName     String    @map("hotel_name")
+  city          String?
+  totalReviews  Int       @default(0) @map("total_reviews")
+  avgScore      Float?    @map("avg_score")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  configs       Config[]
+  reviews       Review[]
+  fetchLogs     FetchLog[]
+
+  @@map("hotels")
+}
+
+model Config {
+  id              Int       @id @default(autoincrement())
+  hotelId         String    @map("hotel_id")
+  fetchIntervalHr Int       @default(24) @map("fetch_interval_hr")
+  pageSize        Int       @default(20) @map("page_size")
+  fetchMode       String    @default("incremental") @map("fetch_mode")
+  isActive        Boolean   @default(true) @map("is_active")
+  lastFetchedAt   DateTime? @map("last_fetched_at")
+  lastFetchedPage Int       @default(0) @map("last_fetched_page")
+  totalFetched    Int       @default(0) @map("total_fetched")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  
+  hotel           Hotel     @relation(fields: [hotelId], references: [hotelId], onDelete: Cascade)
+  reviews         Review[]
+  fetchLogs       FetchLog[]
+
+  @@map("configs")
+}
+
+model Review {
+  id            Int       @id @default(autoincrement())
+  hotelId       String    @map("hotel_id")
+  configId      Int?      @map("config_id")
+  commentId     String    @unique @map("comment_id")
+  rating        Float
+  content       String?
+  roomName      String?   @map("room_name")
+  checkInDate   String?   @map("check_in_date")
+  reviewer      String?
+  reviewDate    String?   @map("review_date")
+  hasImage      Boolean   @default(false) @map("has_image")
+  imageList     String?   @map("image_list")
+  hotelReply    String?   @map("hotel_reply")
+  rawJson       String?   @map("raw_json")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  hotel         Hotel     @relation(fields: [hotelId], references: [hotelId])
+  config        Config?   @relation(fields: [configId], references: [id], onDelete: SetNull)
+
+  @@index([hotelId, reviewDate(sort: Desc)])
+  @@index([hotelId, rating])
+  @@index([configId])
+  @@map("reviews")
+}
+
+model FetchLog {
+  id            Int       @id @default(autoincrement())
+  configId      Int       @map("config_id")
+  hotelId       String    @map("hotel_id")
+  success       Boolean   @default(false)
+  fetchMode     String?   @map("fetch_mode")
+  newCount      Int       @default(0) @map("new_count")
+  totalFetched  Int       @default(0) @map("total_fetched")
+  pagesFetched  Int       @default(0) @map("pages_fetched")
+  error         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  hotel         Hotel     @relation(fields: [hotelId], references: [hotelId])
+  config        Config    @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  @@index([configId, createdAt(sort: Desc)])
+  @@map("fetch_logs")
+}
