@@ -363,7 +363,21 @@ const MAX_LOGS = 1000;
 4. **API层实现**：在 `src/app/api/` 添加路由处理
 5. **前端实现**：在 `src/app/` 添加页面，在 `src/components/` 添加组件
 
-#### 6.2 禁止事项
+#### 6.2 Prisma Schema 变更规范
+
+**重要**：修改 Prisma Schema 后必须重新生成 Prisma Client，否则 TypeScript 类型和运行时客户端将不同步。
+
+```bash
+# 修改 schema.prisma 后执行
+npx prisma generate
+```
+
+**注意事项**：
+- 如果开发服务器正在运行，需要先停止服务器再执行 `prisma generate`，因为 Prisma Client 的文件可能被锁定
+- 执行顺序：`prisma db push` → `prisma generate` → 重启开发服务器
+- 常见错误：`Unknown argument 'xxx'` 表示 Prisma Client 未同步，需要重新生成
+
+#### 6.3 禁止事项
 
 - ❌ 在API Route中直接操作浏览器
 - ❌ 在前端组件中包含业务逻辑
@@ -371,7 +385,7 @@ const MAX_LOGS = 1000;
 - ❌ 跳过类型定义直接使用 `any`
 - ❌ 在服务层引入UI组件依赖
 
-#### 6.3 代码审查要点
+#### 6.4 代码审查要点
 
 - 分层架构是否正确（表现层→服务层→数据层）
 - 类型定义是否完整

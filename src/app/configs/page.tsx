@@ -21,7 +21,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Play, Square, Trash2, History, RefreshCw, Loader2 } from "lucide-react";
+import { Plus, Play, Trash2, History, RefreshCw, Loader2, ChevronDown, Settings } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function ConfigsPage() {
   const [configs, setConfigs] = useState<any[]>([]);
@@ -29,6 +35,7 @@ export default function ConfigsPage() {
   const [loading, setLoading] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [fetchingConfigId, setFetchingConfigId] = useState<number | null>(null);
+  const [fetchingPlatform, setFetchingPlatform] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<any>(null);
 
   const [selectedHotelId, setSelectedHotelId] = useState("");
@@ -76,6 +83,7 @@ export default function ConfigsPage() {
         
         if (!status.isRunning && fetchingConfigId) {
           setFetchingConfigId(null);
+          setFetchingPlatform(null);
           loadData();
         }
       }
@@ -122,13 +130,16 @@ export default function ConfigsPage() {
     }
   };
 
-  const handleFetch = async (configId: number) => {
+  const handleFetch = async (configId: number, platform: "ctrip" | "fliggy", fetchMode?: "cdp" | "api") => {
     setFetchingConfigId(configId);
+    setFetchingPlatform(platform);
+    setError("");
+    
     try {
       const res = await fetch("/api/fetch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ configId }),
+        body: JSON.stringify({ configId, platform, fetchMode }),
       });
 
       const data = await res.json();
@@ -136,10 +147,12 @@ export default function ConfigsPage() {
       if (!res.ok) {
         setError(data.error || "拉取失败");
         setFetchingConfigId(null);
+        setFetchingPlatform(null);
       }
     } catch (err) {
       setError("网络错误");
       setFetchingConfigId(null);
+      setFetchingPlatform(null);
     }
   };
 
@@ -173,6 +186,7 @@ export default function ConfigsPage() {
 
   const isFetching = fetchStatus?.isRunning;
   const currentFetchingHotel = fetchStatus?.currentHotelName;
+  const currentFetchingPlatform = fetchStatus?.currentPlatform;
   const progress = fetchStatus?.progress;
 
   return (
@@ -182,7 +196,7 @@ export default function ConfigsPage() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">拉取配置</h2>
             <p className="text-muted-foreground">
-              为每个酒店设置评价拉取规则
+              为每个酒店设置评价拉取规则（支持携程和飞猪平台）
             </p>
           </div>
           <div className="flex gap-2">
@@ -218,8 +232,11 @@ export default function ConfigsPage() {
                             所有酒店已停用，请先启用
                           </SelectItem>
                         ) : hotels.filter(h => h.isActive).map((hotel) => (
-                          <SelectItem key={hotel.hotelId} value={hotel.hotelId}>
+                          <SelectItem key={hotel.id} value={String(hotel.id)}>
                             {hotel.hotelName}
+                            {hotel.ctripHotelId && hotel.fliggyHotelId && " (携程+飞猪)"}
+                            {hotel.ctripHotelId && !hotel.fliggyHotelId && " (携程)"}
+                            {!hotel.ctripHotelId && hotel.fliggyHotelId && " (飞猪)"}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -275,7 +292,12 @@ export default function ConfigsPage() {
               <div className="flex items-center gap-4">
                 <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
                 <div>
-                  <p className="font-medium">正在拉取: {currentFetchingHotel}</p>
+                  <p className="font-medium">
+                    正在拉取: {currentFetchingHotel} 
+                    <span className="ml-2 text-sm text-muted-foreground">
+                      ({currentFetchingPlatform === "fliggy" ? "飞猪" : "携程"})
+                    </span>
+                  </p>
                   {progress && (
                     <p className="text-sm text-muted-foreground">
                       第 {progress.currentPage} 页 · 新增 {progress.newCount} 条
@@ -283,6 +305,14 @@ export default function ConfigsPage() {
                   )}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {error && !isFetching && (
+          <Card className="border-red-500">
+            <CardContent className="py-4">
+              <p className="text-red-500">{error}</p>
             </CardContent>
           </Card>
         )}
@@ -307,57 +337,119 @@ export default function ConfigsPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {configs.map((config) => (
-                  <div
-                    key={config.id}
-                    className={`flex items-center justify-between p-4 border rounded-lg ${!config.isActive ? 'opacity-50' : ''}`}
-                  >
-                    <div className="space-y-1">
-                      <h3 className="font-medium">{config.hotel?.hotelName || '未知酒店'}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        间隔: {config.fetchIntervalHr}h · 每页: {config.pageSize} · 
-                        模式: {config.fetchMode === "incremental" ? "增量" : "全量"} · 
-                        已拉取: {config.totalFetched || 0} 条
-                      </p>
-                      {config.lastFetchedAt && (
-                        <p className="text-xs text-muted-foreground">
-                          上次拉取: {new Date(config.lastFetchedAt).toLocaleString('zh-CN')}
+                {configs.map((config) => {
+                  const hotel = hotels.find(h => h.id === config.hotelId);
+                  const hasCtripId = hotel?.ctripHotelId;
+                  const hasFliggyId = hotel?.fliggyHotelId;
+                  
+                  return (
+                    <div
+                      key={config.id}
+                      className={`flex items-center justify-between p-4 border rounded-lg ${!config.isActive ? 'opacity-50' : ''}`}
+                    >
+                      <div className="space-y-1">
+                        <h3 className="font-medium">{config.hotel?.hotelName || '未知酒店'}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          间隔: {config.fetchIntervalHr}h · 每页: {config.pageSize} · 
+                          模式: {config.fetchMode === "incremental" ? "增量" : "全量"} · 
+                          已拉取: {config.totalFetched || 0} 条
                         </p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleFetch(config.id)}
-                        disabled={isFetching || fetchingConfigId === config.id}
-                      >
-                        {fetchingConfigId === config.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Play className="h-4 w-4" />
+                        {config.lastFetchedAt && (
+                          <p className="text-xs text-muted-foreground">
+                            上次拉取: {new Date(config.lastFetchedAt).toLocaleString('zh-CN')}
+                          </p>
                         )}
-                        立即拉取
-                      </Button>
-                      <Button variant="ghost" size="icon" title="查看日志">
-                        <History className="h-4 w-4" />
-                      </Button>
-                      <Switch 
-                        checked={config.isActive}
-                        onCheckedChange={() => handleToggleActive(config)}
-                      />
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="text-red-500"
-                        onClick={() => handleDeleteConfig(config.id)}
-                        title="删除"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {hasCtripId ? (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                            onClick={() => handleFetch(config.id, "ctrip")}
+                            disabled={isFetching || (fetchingConfigId === config.id && fetchingPlatform === "ctrip")}
+                          >
+                            {fetchingConfigId === config.id && fetchingPlatform === "ctrip" ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Play className="h-4 w-4" />
+                            )}
+                            携程
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-gray-400 border-gray-200"
+                            disabled
+                            title="请先在酒店管理中添加携程酒店ID"
+                          >
+                            <Play className="h-4 w-4" />
+                            携程
+                          </Button>
+                        )}
+                        {hasFliggyId && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                                disabled={isFetching || (fetchingConfigId === config.id && fetchingPlatform === "fliggy")}
+                              >
+                                {fetchingConfigId === config.id && fetchingPlatform === "fliggy" ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Play className="h-4 w-4" />
+                                )}
+                                飞猪
+                                <ChevronDown className="h-3 w-3 ml-1" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleFetch(config.id, "fliggy", "cdp")}>
+                                <Play className="h-4 w-4 mr-2" />
+                                CDP方式拉取
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleFetch(config.id, "fliggy", "api")}>
+                                <Play className="h-4 w-4 mr-2" />
+                                API方式拉取
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                        {!hasFliggyId && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-gray-400 border-gray-200"
+                            disabled
+                            title="请先在酒店管理中添加飞猪酒店ID"
+                          >
+                            <Play className="h-4 w-4" />
+                            飞猪
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon" title="查看日志">
+                          <History className="h-4 w-4" />
+                        </Button>
+                        <Switch 
+                          checked={config.isActive}
+                          onCheckedChange={() => handleToggleActive(config)}
+                        />
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-red-500"
+                          onClick={() => handleDeleteConfig(config.id)}
+                          title="删除"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>

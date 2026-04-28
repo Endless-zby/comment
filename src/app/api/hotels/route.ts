@@ -22,20 +22,39 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    if (!body.hotelName) {
+      return NextResponse.json(
+        { error: "酒店名称为必填项" },
+        { status: 400 }
+      );
+    }
+    
     const hotel = await prisma.hotel.create({
       data: {
-        hotelId: body.hotelId,
         hotelName: body.hotelName,
+        ctripHotelId: body.ctripHotelId || null,
+        fliggyHotelId: body.fliggyHotelId || null,
         city: body.city || null,
       },
     });
     return NextResponse.json(hotel, { status: 201 });
   } catch (error: any) {
     if (error.code === "P2002") {
-      return NextResponse.json(
-        { error: "酒店ID已存在" },
-        { status: 400 }
-      );
+      const target = error.meta?.target || [];
+      if (target.includes("ctrip_hotel_id")) {
+        return NextResponse.json(
+          { error: "携程酒店ID已存在" },
+          { status: 400 }
+        );
+      }
+      if (target.includes("fliggy_hotel_id")) {
+        return NextResponse.json(
+          { error: "飞猪酒店ID已存在" },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json({ error: "唯一字段冲突" }, { status: 400 });
     }
     return NextResponse.json(
       { error: "创建酒店失败" },

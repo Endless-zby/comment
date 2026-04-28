@@ -1,7 +1,8 @@
 export interface Hotel {
   id: number;
-  hotelId: string;
   hotelName: string;
+  ctripHotelId: string | null;
+  fliggyHotelId: string | null;
   city: string | null;
   totalReviews: number;
   avgScore: number | null;
@@ -11,7 +12,7 @@ export interface Hotel {
 
 export interface Config {
   id: number;
-  hotelId: string;
+  hotelId: number;
   fetchIntervalHr: number;
   pageSize: number;
   fetchMode: "full" | "incremental";
@@ -24,9 +25,10 @@ export interface Config {
 
 export interface Review {
   id: number;
-  hotelId: string;
+  hotelId: number;
   configId: number | null;
   commentId: string;
+  platform: string;
   rating: number;
   content: string | null;
   roomName: string | null;
@@ -43,7 +45,7 @@ export interface Review {
 export interface FetchLog {
   id: number;
   configId: number;
-  hotelId: string;
+  hotelId: number;
   success: boolean;
   fetchMode: string | null;
   newCount: number;
@@ -74,8 +76,9 @@ export interface ReviewSummary {
 
 export interface FetchStatus {
   isRunning: boolean;
-  currentHotelId: string | null;
+  currentHotelId: number | null;
   currentHotelName: string | null;
+  currentPlatform: string | null;
   progress: {
     currentPage: number;
     newCount: number;

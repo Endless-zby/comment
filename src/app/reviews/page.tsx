@@ -17,8 +17,9 @@ import { cn } from "@/lib/utils";
 
 interface Review {
   id: number;
-  hotelId: string;
+  hotelId: number;
   commentId: string;
+  platform: string;
   rating: number;
   content: string | null;
   roomName: string | null;
@@ -31,8 +32,9 @@ interface Review {
 }
 
 interface Hotel {
-  hotelId: string;
+  id: number;
   hotelName: string;
+  fliggyHotelId?: string;
 }
 
 interface Pagination {
@@ -47,6 +49,7 @@ export default function ReviewsPage() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [selectedHotelId, setSelectedHotelId] = useState("");
   const [ratingFilter, setRatingFilter] = useState("all");
+  const [platformFilter, setPlatformFilter] = useState("all");
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, pageSize: 20, total: 0, totalPages: 0 });
@@ -62,7 +65,7 @@ export default function ReviewsPage() {
         const data = await res.json();
         setHotels(data);
         if (data.length > 0 && !selectedHotelId) {
-          setSelectedHotelId(data[0].hotelId);
+          setSelectedHotelId(String(data[0].id));
         }
       }
     } catch (err) {
@@ -78,6 +81,7 @@ export default function ReviewsPage() {
       const params = new URLSearchParams({
         hotelId: selectedHotelId,
         rating: ratingFilter,
+        platform: platformFilter,
         page: page.toString(),
         pageSize: "20",
       });
@@ -97,13 +101,13 @@ export default function ReviewsPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedHotelId, ratingFilter, keyword]);
+  }, [selectedHotelId, ratingFilter, platformFilter, keyword]);
 
   useEffect(() => {
     if (selectedHotelId) {
       loadReviews(1);
     }
-  }, [selectedHotelId, ratingFilter, loadReviews]);
+  }, [selectedHotelId, ratingFilter, platformFilter, loadReviews]);
 
   const handleSearch = () => {
     loadReviews(1);
@@ -142,12 +146,23 @@ export default function ReviewsPage() {
     return "bg-red-100 text-red-700";
   };
 
+  const getPlatformBadge = (platform: string) => {
+    if (platform === "fliggy") {
+      return "bg-orange-100 text-orange-700";
+    }
+    return "bg-blue-100 text-blue-700";
+  };
+
+  const getPlatformLabel = (platform: string) => {
+    return platform === "fliggy" ? "飞猪" : "携程";
+  };
+
   return (
     <AppLayout>
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">评价列表</h2>
-          <p className="text-muted-foreground">浏览已拉取的评价数据</p>
+          <p className="text-muted-foreground">浏览已拉取的评价数据（支持携程和飞猪平台）</p>
         </div>
 
         <Card>
@@ -164,10 +179,20 @@ export default function ReviewsPage() {
                   {hotels.length === 0 ? (
                     <SelectItem value="_empty" disabled>暂无酒店</SelectItem>
                   ) : hotels.map((hotel) => (
-                    <SelectItem key={hotel.hotelId} value={hotel.hotelId}>
+                    <SelectItem key={hotel.id} value={String(hotel.id)}>
                       {hotel.hotelName}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+              <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="平台筛选" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部平台</SelectItem>
+                  <SelectItem value="ctrip">携程</SelectItem>
+                  <SelectItem value="fliggy">飞猪</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={ratingFilter} onValueChange={setRatingFilter}>
@@ -220,6 +245,7 @@ export default function ReviewsPage() {
                 {selectedHotelId && hotels.find(h => h.hotelId === selectedHotelId) && (
                   <span className="text-sm text-muted-foreground ml-2">
                     - {hotels.find(h => h.hotelId === selectedHotelId)?.hotelName}
+                    {platformFilter !== "all" && ` (${platformFilter === "fliggy" ? "飞猪" : "携程"})`}
                   </span>
                 )}
               </CardTitle>
@@ -244,6 +270,9 @@ export default function ReviewsPage() {
                             {renderStars(review.rating)}
                             <span className={cn("px-2 py-0.5 rounded text-xs font-medium", getRatingColor(review.rating))}>
                               {review.rating >= 4 ? '好评' : review.rating >= 3 ? '中评' : '差评'}
+                            </span>
+                            <span className={cn("px-2 py-0.5 rounded text-xs font-medium", getPlatformBadge(review.platform))}>
+                              {getPlatformLabel(review.platform)}
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground">

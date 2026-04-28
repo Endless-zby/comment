@@ -21,8 +21,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const hotelId = searchParams.get("hotelId");
+    const platform = searchParams.get("platform");
 
-    const where = hotelId ? { hotelId } : {};
+    const where: any = {};
+    if (hotelId) where.hotelId = parseInt(hotelId);
+    if (platform && platform !== "all") where.platform = platform;
 
     const reviews = await prisma.review.findMany({
       where,
@@ -35,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     const weeklyData = new Map<string, { ratings: number[]; count: number }>();
 
-    reviews.forEach((review) => {
+    reviews.forEach((review: { rating: number; reviewDate: string | null; createdAt: Date }) => {
       const date = review.reviewDate ? new Date(review.reviewDate) : review.createdAt;
       const weekLabel = getWeekNumber(date);
 

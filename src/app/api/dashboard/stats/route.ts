@@ -18,15 +18,16 @@ export async function GET() {
 
     const totalReviews = allReviews.length;
     const avgScore = allReviews.length > 0
-      ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
+      ? allReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / allReviews.length
       : 0;
 
-    const badReviews = allReviews.filter(r => r.rating < 3).length;
+    const badReviews = allReviews.filter((r: { rating: number }) => r.rating < 3).length;
 
-    const hotelStats = hotels.map(hotel => ({
+    const hotelStats = hotels.map((hotel: { id: number; hotelName: string; ctripHotelId: string | null; fliggyHotelId: string | null; _count: { reviews: number }; avgScore: number | null; isActive: boolean }) => ({
       id: hotel.id,
-      hotelId: hotel.hotelId,
       hotelName: hotel.hotelName,
+      ctripHotelId: hotel.ctripHotelId,
+      fliggyHotelId: hotel.fliggyHotelId,
       totalReviews: hotel._count.reviews,
       avgScore: hotel.avgScore,
       isActive: hotel.isActive,

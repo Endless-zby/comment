@@ -13,8 +13,9 @@ interface DashboardStats {
   badReviews: number;
   hotelStats: Array<{
     id: number;
-    hotelId: string;
     hotelName: string;
+    ctripHotelId: string | null;
+    fliggyHotelId: string | null;
     totalReviews: number;
     avgScore: number | null;
     isActive: boolean;
@@ -130,7 +131,7 @@ export default function DashboardPage() {
                   <thead>
                     <tr className="border-b">
                       <th className="text-left py-3 px-4 font-medium">酒店名称</th>
-                      <th className="text-left py-3 px-4 font-medium">酒店ID</th>
+                      <th className="text-left py-3 px-4 font-medium">平台ID</th>
                       <th className="text-left py-3 px-4 font-medium">评价数</th>
                       <th className="text-left py-3 px-4 font-medium">平均评分</th>
                       <th className="text-left py-3 px-4 font-medium">状态</th>
@@ -140,7 +141,12 @@ export default function DashboardPage() {
                     {stats.hotelStats.map((hotel) => (
                       <tr key={hotel.id} className="border-b">
                         <td className="py-3 px-4">{hotel.hotelName}</td>
-                        <td className="py-3 px-4 text-muted-foreground">{hotel.hotelId}</td>
+                        <td className="py-3 px-4 text-muted-foreground">
+                          {hotel.ctripHotelId && `携程: ${hotel.ctripHotelId}`}
+                          {hotel.ctripHotelId && hotel.fliggyHotelId && " · "}
+                          {hotel.fliggyHotelId && `飞猪: ${hotel.fliggyHotelId}`}
+                          {!hotel.ctripHotelId && !hotel.fliggyHotelId && "未配置"}
+                        </td>
                         <td className="py-3 px-4">{hotel.totalReviews}</td>
                         <td className="py-3 px-4">
                           {hotel.avgScore ? hotel.avgScore.toFixed(1) : "-"}

@@ -27,14 +27,16 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
+    
+    const updateData: any = {};
+    if (body.fetchIntervalHr !== undefined) updateData.fetchIntervalHr = body.fetchIntervalHr;
+    if (body.pageSize !== undefined) updateData.pageSize = body.pageSize;
+    if (body.fetchMode !== undefined) updateData.fetchMode = body.fetchMode;
+    if (body.isActive !== undefined) updateData.isActive = body.isActive;
+    
     const config = await prisma.config.update({
       where: { id: parseInt(id) },
-      data: {
-        fetchIntervalHr: body.fetchIntervalHr,
-        pageSize: body.pageSize,
-        fetchMode: body.fetchMode,
-        isActive: body.isActive,
-      },
+      data: updateData,
     });
     return NextResponse.json(config);
   } catch (error) {

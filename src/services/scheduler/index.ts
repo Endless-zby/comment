@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { prisma } from "@/lib/prisma";
 import { fetchReviews } from "../crawler/review-fetcher";
+import { fetchFliggyReviewsByApi } from "../crawler/fliggy-fetcher";
 import { createLogger } from "../logger";
 
 const log = createLogger("Scheduler");
@@ -30,7 +31,7 @@ export function addJob(configId: number): void {
       where: { id: configId },
       include: { hotel: true },
     })
-    .then((config) => {
+    .then((config: { id: number; isActive: boolean; fetchIntervalHr: number; pageSize: number; fetchMode: string; hotel: { id: number; hotelName: string; ctripHotelId: string | null; fliggyHotelId: string | null } } | null) => {
       if (config && config.isActive && config.hotel) {
         scheduleJob(config);
       }
@@ -45,21 +46,39 @@ export function removeJob(configId: number): void {
   }
 }
 
-function scheduleJob(config: any): void {
+function scheduleJob(config: { id: number; fetchIntervalHr: number; pageSize: number; fetchMode: string; hotel: { id: number; hotelName: string; ctripHotelId: string | null; fliggyHotelId: string | null } }): void {
   const interval = Math.max(1, config.fetchIntervalHr);
   const cronExpr = `0 */${interval} * * *`;
 
   const job = cron.schedule(cronExpr, async () => {
     log.info(`开始拉取酒店 ${config.hotel.hotelName} 的评价`);
+    
     try {
-      const result = await fetchReviews(
-        config.hotel.hotelId,
-        config.hotel.hotelName,
-        config.id,
-        config.pageSize,
-        config.fetchMode
-      );
-      log.info(`拉取完成，新增 ${result.newCount} 条评价`);
+      if (config.hotel.ctripHotelId) {
+        const result = await fetchReviews(
+          config.hotel.ctripHotelId,
+          config.hotel.id,
+          config.hotel.hotelName,
+          config.id,
+          config.pageSize,
+          config.fetchMode as "full" | "incremental"
+        );
+        log.info(`携程拉取完成，新增 ${result.newCount} 条评价`);
+      } else {
+        log.warn(`酒店 ${config.hotel.hotelName} 未配置携程酒店ID，跳过携程拉取`);
+      }
+
+      if (config.hotel.fliggyHotelId) {
+        const result = await fetchFliggyReviewsByApi(
+          config.hotel.fliggyHotelId,
+          config.hotel.id,
+          config.hotel.hotelName,
+          config.id
+        );
+        log.info(`飞猪拉取完成，新增 ${result.newCount} 条评价`);
+      } else {
+        log.warn(`酒店 ${config.hotel.hotelName} 未配置飞猪酒店ID，跳过飞猪拉取`);
+      }
     } catch (err: any) {
       log.error(`拉取失败: ${err.message}`);
     }

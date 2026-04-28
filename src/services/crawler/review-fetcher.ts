@@ -28,8 +28,9 @@ interface FetchResult {
 let isFetching = false;
 let currentFetchStatus = {
   isRunning: false,
-  currentHotelId: null as string | null,
+  currentHotelId: null as number | null,
   currentHotelName: null as string | null,
+  currentPlatform: null as string | null,
   progress: null as { currentPage: number; newCount: number; totalPages: number } | null,
 };
 
@@ -38,7 +39,8 @@ export function getFetchStatus() {
 }
 
 export async function fetchReviews(
-  hotelId: string,
+  ctripHotelId: string,
+  hotelId: number,
   hotelName: string,
   configId: number,
   pageSize: number = 20,
@@ -54,6 +56,7 @@ export async function fetchReviews(
     isRunning: true,
     currentHotelId: hotelId,
     currentHotelName: hotelName,
+    currentPlatform: "ctrip",
     progress: { currentPage: 0, newCount: 0, totalPages: 0 },
   };
 
@@ -176,7 +179,7 @@ export async function fetchReviews(
       }
     });
 
-    const url = `https://hotels.ctrip.com/hotels/${hotelId}.html`;
+    const url = `https://hotels.ctrip.com/hotels/${ctripHotelId}.html`;
     console.log(`[Fetcher] 导航到: ${url}`);
     
     await page.goto(url, { 
@@ -246,9 +249,9 @@ export async function fetchReviews(
     await client.detach();
     await closeBrowser();
 
-    console.log(`[Fetcher] 删除酒店 ${hotelId} 的旧评价数据...`);
+    console.log(`[Fetcher] 删除酒店 ${hotelId} 的旧携程评价数据...`);
     await prisma.review.deleteMany({
-      where: { hotelId },
+      where: { hotelId, platform: "ctrip" },
     });
 
     console.log(`[Fetcher] 保存 ${allReviews.length} 条新评价...`);
@@ -267,6 +270,7 @@ export async function fetchReviews(
       data: {
         configId,
         hotelId,
+        platform: "ctrip",
         success: true,
         fetchMode: "full",
         newCount: allReviews.length,
@@ -275,12 +279,17 @@ export async function fetchReviews(
       },
     });
 
-    if (allReviews.length > 0) {
-      const avgScore = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+    const allPlatformReviews = await prisma.review.findMany({
+      where: { hotelId },
+      select: { rating: true },
+    });
+
+    if (allPlatformReviews.length > 0) {
+      const avgScore = allPlatformReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / allPlatformReviews.length;
       await prisma.hotel.update({
-        where: { hotelId },
+        where: { id: hotelId },
         data: {
-          totalReviews: allReviews.length,
+          totalReviews: allPlatformReviews.length,
           avgScore,
         },
       });
@@ -290,6 +299,7 @@ export async function fetchReviews(
       isRunning: false,
       currentHotelId: null,
       currentHotelName: null,
+      currentPlatform: null,
       progress: null,
     };
     isFetching = false;
@@ -313,6 +323,7 @@ export async function fetchReviews(
       data: {
         configId,
         hotelId,
+        platform: "ctrip",
         success: false,
         fetchMode,
         error: error.message,
@@ -323,6 +334,7 @@ export async function fetchReviews(
       isRunning: false,
       currentHotelId: null,
       currentHotelName: null,
+      currentPlatform: null,
       progress: null,
     };
     isFetching = false;
@@ -377,7 +389,7 @@ function parseCommentListResponse(json: any): CtripReviewData[] {
 
 async function saveReviews(
   reviews: CtripReviewData[],
-  hotelId: string,
+  hotelId: number,
   configId: number
 ): Promise<void> {
   for (const review of reviews) {
@@ -387,6 +399,7 @@ async function saveReviews(
           hotelId,
           configId,
           commentId: review.commentId,
+          platform: "ctrip",
           rating: review.rating,
           content: review.content,
           roomName: review.roomName,

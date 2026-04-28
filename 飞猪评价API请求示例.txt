@@ -1,0 +1,15 @@
+curl 'https://hotel.alitrip.com/ajax/getHotelRates.htm?sellerId=&page=2&showContent=0&shid=77034255&sort=1&t=1777083724344&sn=0&_ksTS=1777083724344_905&callback=jsonp906' \
+  -H 'accept: text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01' \
+  -H 'accept-language: zh-CN,zh;q=0.9,zh-TW;q=0.8,en-US;q=0.7,en;q=0.6' \
+  -H 'bx-v: 2.5.36' \
+  -b 't=7847123980e467df1209c8e564d9626f; lgc=; sn=; dnk=%5Cu697C%5Cu4E0B%5Cu5C0F%5Cu9ED1ai; tracknick=%5Cu697C%5Cu4E0B%5Cu5C0F%5Cu9ED1ai; lid=%E6%A5%BC%E4%B8%8B%E5%B0%8F%E9%BB%91ai; login=true; wk_cookie2=1b1e1ed34e6bb2d1fcff2cc33ecb08b5; cookie2=13126fb97fc0fed9678ba3e94e209f3c; cancelledSubSites=empty; _tb_token_=f0547b7b7b3ad; wk_unb=UUtP%2FnK1RV9beg%3D%3D; VISITED_HOTEL_TOKEN=b019cdc8-29fe-4a95-ad6b-c731b61c84cd; mtop_partitioned_detect=1; _m_h5_tk=4fca011b1fdd6b7f335a7e2f02ea614c_1777089847193; _m_h5_tk_enc=e964e10b44b44bc729b2b6dc0c2e1a4f; cna=3wpzImIitBYCAduP9OIN68j7; xlly_s=1; chanelStat="NA=="; chanelStatExpire="2026-04-28 09:49:06"; _l_g_=Ug%3D%3D; unb=2346214115; cookie1=Vve1PWePBmtBE%2FAB0thjCR3%2BdDb2KfUKGruIyYfKcVQ%3D; cookie17=UUtP%2FnK1RV9beg%3D%3D; _nk_=%5Cu697C%5Cu4E0B%5Cu5C0F%5Cu9ED1ai; sgcookie=E100LVuFJcWEEUhP2dm4waShU6qncJfQBCZRjw8OSXmwx0mZBwvA4%2BwWHgYNfBX7zUyCOY%2FxbSQOXAXs09N1KR9whIzB3lvIwXaBxD%2BZlsgcXeA6kkJKvvMENo4%2BIowKPj7MYy1cSwg3ELf2auIN46TlKA%3D%3D; sg=i55; csg=706b2dce; havana_lgc_exp=1808185887521; uc1=pas=0&cookie14=UoYZbYrdsftdKQ%3D%3D&cookie15=W5iHLLyFOGW7aA%3D%3D&existShop=false&cookie21=V32FPkk%2FgihF%2FS5nr3O5&cookie16=VT5L2FSpNgq6fDudInPRgavC%2BQ%3D%3D; tfstk=ge_ScTcZVYD58mF8pYPqGl3qVV8QgSzNeXOds63r9UL-O91GCe-Lq9zB966WLHekzw6fEt0F49zkO21Gd_8ev6hB9t8JxgJeUpTCtON4QPzNZ_YHpRya7TMQWLLJwppJ2WKv_CF2wGVSacLHJRyq02Ku5eXW7gBHesFXTBl-J9pRMqpDOD3dpLKxHCOMJpBdpndvOQOJ9QpJDxpD9epdpBHYGBJvweLdpsFXtbGnQBNeF_Np8G2-MANvjKgKJZOYKdC7GVR5oQaWL_JbBAbjS39OwKgLFJ9sTp9cW-rfi9IRUIXQ5-TOjt_BXeaSIQsA1EpyWliXPsWl5UQ_F4R2ALsAynGKJEL2dnICF8ikegWXjIKxOPAVQKClyiNnH_BwFUdv0PF1MHIVrhbzH4TOj_8PvOeq4LI69grm7dtV9DGXj2OXQSNjxDvpSU9mRbMd43dDNENbGYTv2IAXQSNjxDxJiIobGSMWk; isg=BBkZNZuSlGRCBkjwt5Ry6opuKAXzpg1Yz6IF5TvNhcI3QjvUg_IaKHkURAY0eqWQ' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hotel.alitrip.com/hotel_detail2.htm?spm=181.11197625.4973973.1.18b94a0aDR6vbE&shid=77034255&_output_charset=utf8' \
+  -H 'sec-ch-ua: "Google Chrome";v="147", "Not.A/Brand";v="8", "Chromium";v="147"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36' \
+  -H 'x-requested-with: XMLHttpRequest'

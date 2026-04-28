@@ -37,6 +37,8 @@ interface Summary {
   goodCount: number;
   neutralCount: number;
   badCount: number;
+  ctripCount: number;
+  fliggyCount: number;
   recent7dCount: number;
   recent30dCount: number;
 }
@@ -52,12 +54,13 @@ interface WeeklyStat {
 }
 
 interface Hotel {
-  hotelId: string;
+  id: number;
   hotelName: string;
 }
 
 export default function StatsPage() {
   const [selectedHotelId, setSelectedHotelId] = useState("all");
+  const [selectedPlatform, setSelectedPlatform] = useState("all");
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [weeklyStats, setWeeklyStats] = useState<WeeklyStat[]>([]);
@@ -69,7 +72,7 @@ export default function StatsPage() {
 
   useEffect(() => {
     loadStats();
-  }, [selectedHotelId]);
+  }, [selectedHotelId, selectedPlatform]);
 
   const loadHotels = async () => {
     try {
@@ -86,11 +89,20 @@ export default function StatsPage() {
   const loadStats = async () => {
     setLoading(true);
     try {
-      const hotelIdParam = selectedHotelId === "all" ? "" : `?hotelId=${selectedHotelId}`;
+      const params = new URLSearchParams();
+      if (selectedHotelId !== "all") {
+        params.set("hotelId", selectedHotelId);
+      }
+      if (selectedPlatform !== "all") {
+        params.set("platform", selectedPlatform);
+      }
+
+      const queryString = params.toString();
+      const suffix = queryString ? `?${queryString}` : "";
 
       const [summaryRes, weeklyRes] = await Promise.all([
-        fetch(`/api/reviews/summary${hotelIdParam}`),
-        fetch(`/api/reviews/weekly${hotelIdParam}`),
+        fetch(`/api/reviews/summary${suffix}`),
+        fetch(`/api/reviews/weekly${suffix}`),
       ]);
 
       if (summaryRes.ok) {
@@ -132,7 +144,7 @@ export default function StatsPage() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">评价统计</h2>
             <p className="text-muted-foreground">
-              以周为单位的评论增长统计图表
+              以周为单位的评论增长统计图表（支持携程和飞猪平台）
             </p>
           </div>
           <div className="flex gap-2">
@@ -143,10 +155,20 @@ export default function StatsPage() {
               <SelectContent>
                 <SelectItem value="all">全部酒店</SelectItem>
                 {hotels.map((hotel) => (
-                  <SelectItem key={hotel.hotelId} value={hotel.hotelId}>
+                  <SelectItem key={hotel.id} value={String(hotel.id)}>
                     {hotel.hotelName}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="选择平台" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部平台</SelectItem>
+                <SelectItem value="ctrip">携程</SelectItem>
+                <SelectItem value="fliggy">飞猪</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={loadStats} disabled={loading}>
@@ -163,6 +185,11 @@ export default function StatsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{summary?.totalReviews ?? 0}</div>
+              {selectedPlatform === "all" && summary && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  携程: {summary.ctripCount} · 飞猪: {summary.fliggyCount}
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -216,7 +243,14 @@ export default function StatsPage() {
           <>
             <Card>
               <CardHeader>
-                <CardTitle>周评论增长趋势</CardTitle>
+                <CardTitle>
+                  周评论增长趋势
+                  {selectedPlatform !== "all" && (
+                    <span className="text-sm text-muted-foreground ml-2">
+                      ({selectedPlatform === "fliggy" ? "飞猪" : "携程"})
+                    </span>
+                  )}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">

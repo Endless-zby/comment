@@ -30,19 +30,52 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
+    
+    const updateData: any = {};
+    
+    if (body.hotelName !== undefined) {
+      updateData.hotelName = body.hotelName;
+    }
+    if (body.ctripHotelId !== undefined) {
+      updateData.ctripHotelId = body.ctripHotelId || null;
+    }
+    if (body.fliggyHotelId !== undefined) {
+      updateData.fliggyHotelId = body.fliggyHotelId || null;
+    }
+    if (body.city !== undefined) {
+      updateData.city = body.city;
+    }
+    if (body.isActive !== undefined) {
+      updateData.isActive = body.isActive;
+    }
+    if (body.totalReviews !== undefined) {
+      updateData.totalReviews = body.totalReviews;
+    }
+    if (body.avgScore !== undefined) {
+      updateData.avgScore = body.avgScore;
+    }
+    
     const hotel = await prisma.hotel.update({
       where: { id: parseInt(id) },
-      data: {
-        hotelName: body.hotelName,
-        city: body.city,
-        isActive: body.isActive,
-        totalReviews: body.totalReviews,
-        avgScore: body.avgScore,
-      },
+      data: updateData,
     });
     return NextResponse.json(hotel);
-  } catch (error) {
-    return NextResponse.json({ error: "更新酒店失败" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[Hotel API] 更新错误:", error);
+    if (error.code === "P2002") {
+      const target = error.meta?.target || [];
+      if (target.includes("ctrip_hotel_id")) {
+        return NextResponse.json({ error: "携程酒店ID已存在" }, { status: 400 });
+      }
+      if (target.includes("fliggy_hotel_id")) {
+        return NextResponse.json({ error: "飞猪酒店ID已存在" }, { status: 400 });
+      }
+      return NextResponse.json({ error: "唯一字段冲突" }, { status: 400 });
+    }
+    if (error.code === "P2025") {
+      return NextResponse.json({ error: "酒店不存在" }, { status: 404 });
+    }
+    return NextResponse.json({ error: `更新酒店失败: ${error.message}` }, { status: 500 });
   }
 }
 

@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const hotelId = searchParams.get("hotelId");
 
-    const where = hotelId ? { hotelId } : {};
+    const where = hotelId ? { hotelId: parseInt(hotelId) } : {};
 
     const configs = await prisma.config.findMany({
       where,
@@ -22,9 +22,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    if (!body.hotelId) {
+      return NextResponse.json({ error: "请选择酒店" }, { status: 400 });
+    }
+    
     const config = await prisma.config.create({
       data: {
-        hotelId: body.hotelId,
+        hotelId: parseInt(body.hotelId),
         fetchIntervalHr: body.fetchIntervalHr || 24,
         pageSize: body.pageSize || 20,
         fetchMode: body.fetchMode || "incremental",

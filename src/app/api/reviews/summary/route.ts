@@ -5,8 +5,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const hotelId = searchParams.get("hotelId");
+    const platform = searchParams.get("platform");
 
-    const where = hotelId ? { hotelId } : {};
+    const where: any = {};
+    if (hotelId) where.hotelId = parseInt(hotelId);
+    if (platform && platform !== "all") where.platform = platform;
 
     const reviews = await prisma.review.findMany({
       where,
@@ -14,28 +17,32 @@ export async function GET(request: NextRequest) {
         rating: true,
         reviewDate: true,
         createdAt: true,
+        platform: true,
       },
     });
 
     const totalReviews = reviews.length;
     const avgScore = reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      ? reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length
       : 0;
 
-    const goodCount = reviews.filter(r => r.rating >= 4).length;
-    const neutralCount = reviews.filter(r => r.rating >= 3 && r.rating < 4).length;
-    const badCount = reviews.filter(r => r.rating < 3).length;
+    const goodCount = reviews.filter((r: { rating: number }) => r.rating >= 4).length;
+    const neutralCount = reviews.filter((r: { rating: number }) => r.rating >= 3 && r.rating < 4).length;
+    const badCount = reviews.filter((r: { rating: number }) => r.rating < 3).length;
+
+    const ctripCount = reviews.filter((r: { platform: string }) => r.platform === "ctrip").length;
+    const fliggyCount = reviews.filter((r: { platform: string }) => r.platform === "fliggy").length;
 
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    const recent7dCount = reviews.filter(r => {
+    const recent7dCount = reviews.filter((r: { reviewDate: string | null; createdAt: Date }) => {
       const date = r.reviewDate ? new Date(r.reviewDate) : r.createdAt;
       return date >= sevenDaysAgo;
     }).length;
 
-    const recent30dCount = reviews.filter(r => {
+    const recent30dCount = reviews.filter((r: { reviewDate: string | null; createdAt: Date }) => {
       const date = r.reviewDate ? new Date(r.reviewDate) : r.createdAt;
       return date >= thirtyDaysAgo;
     }).length;
@@ -48,6 +55,8 @@ export async function GET(request: NextRequest) {
       goodCount,
       neutralCount,
       badCount,
+      ctripCount,
+      fliggyCount,
       recent7dCount,
       recent30dCount,
     });

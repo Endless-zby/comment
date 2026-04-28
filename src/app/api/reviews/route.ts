@@ -7,17 +7,19 @@ export async function GET(request: NextRequest) {
     const hotelId = searchParams.get("hotelId");
     const rating = searchParams.get("rating");
     const keyword = searchParams.get("keyword");
+    const platform = searchParams.get("platform");
     const page = parseInt(searchParams.get("page") || "1");
     const pageSize = parseInt(searchParams.get("pageSize") || "20");
     const sortBy = searchParams.get("sortBy") || "date";
     const sortOrder = searchParams.get("sortOrder") || "desc";
 
     const where: any = {};
-    if (hotelId) where.hotelId = hotelId;
+    if (hotelId) where.hotelId = parseInt(hotelId);
     if (rating === "good") where.rating = { gte: 4 };
     if (rating === "neutral") where.rating = { gte: 3, lt: 4 };
     if (rating === "bad") where.rating = { lt: 3 };
     if (keyword) where.content = { contains: keyword };
+    if (platform && platform !== "all") where.platform = platform;
 
     const orderBy: any = {};
     if (sortBy === "date") orderBy.reviewDate = sortOrder;
@@ -28,6 +30,7 @@ export async function GET(request: NextRequest) {
       orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize,
+      include: { hotel: true },
     });
 
     const total = await prisma.review.count({ where });
