@@ -28,10 +28,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Database
-data/
-*.db
-*.db-journal
+# Database (removed to allow db files to be committed)
+# data/
+# *.db
+# *.db-journal
 
 # IDE
 .idea/

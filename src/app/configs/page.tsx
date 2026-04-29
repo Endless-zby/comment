@@ -21,13 +21,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Play, Trash2, History, RefreshCw, Loader2, ChevronDown, Settings } from "lucide-react";
+import { Plus, Play, Trash2, History, RefreshCw, Loader2, ChevronDown, Settings, CheckCircle, XCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface FetchResult {
+  success: boolean;
+  platform: string;
+  fetchMode?: string;
+  newCount?: number;
+  totalPages?: number;
+  error?: string;
+  hotelName: string;
+  timestamp: Date;
+}
 
 export default function ConfigsPage() {
   const [configs, setConfigs] = useState<any[]>([]);
@@ -36,12 +47,14 @@ export default function ConfigsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [fetchingConfigId, setFetchingConfigId] = useState<number | null>(null);
   const [fetchingPlatform, setFetchingPlatform] = useState<string | null>(null);
+  const [fetchingMode, setFetchingMode] = useState<string | null>(null);
   const [fetchStatus, setFetchStatus] = useState<any>(null);
+  const [fetchResults, setFetchResults] = useState<FetchResult[]>([]);
 
   const [selectedHotelId, setSelectedHotelId] = useState("");
   const [fetchInterval, setFetchInterval] = useState(24);
   const [pageSize, setPageSize] = useState(20);
-  const [fetchMode, setFetchMode] = useState("incremental");
+  const [fetchModeInput, setFetchModeInput] = useState("incremental");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -84,6 +97,7 @@ export default function ConfigsPage() {
         if (!status.isRunning && fetchingConfigId) {
           setFetchingConfigId(null);
           setFetchingPlatform(null);
+          setFetchingMode(null);
           loadData();
         }
       }
@@ -108,7 +122,7 @@ export default function ConfigsPage() {
           hotelId: selectedHotelId,
           fetchIntervalHr: fetchInterval,
           pageSize,
-          fetchMode,
+          fetchMode: fetchModeInput,
           isActive: true,
         }),
       });
@@ -121,7 +135,7 @@ export default function ConfigsPage() {
         setSelectedHotelId("");
         setFetchInterval(24);
         setPageSize(20);
-        setFetchMode("incremental");
+        setFetchModeInput("incremental");
       } else {
         setError(data.error || "创建失败");
       }
@@ -131,8 +145,12 @@ export default function ConfigsPage() {
   };
 
   const handleFetch = async (configId: number, platform: "ctrip" | "fliggy", fetchMode?: "cdp" | "api") => {
+    const config = configs.find(c => c.id === configId);
+    const hotelName = config?.hotel?.hotelName || "未知酒店";
+    
     setFetchingConfigId(configId);
     setFetchingPlatform(platform);
+    setFetchingMode(fetchMode || null);
     setError("");
     
     try {
@@ -144,15 +162,41 @@ export default function ConfigsPage() {
 
       const data = await res.json();
 
+      const result: FetchResult = {
+        success: res.ok,
+        platform,
+        fetchMode: data.fetchMode || fetchMode,
+        newCount: data.newCount,
+        totalPages: data.totalPages,
+        error: data.error,
+        hotelName,
+        timestamp: new Date(),
+      };
+
+      setFetchResults(prev => [result, ...prev].slice(0, 10));
+
       if (!res.ok) {
         setError(data.error || "拉取失败");
-        setFetchingConfigId(null);
-        setFetchingPlatform(null);
       }
+      
+      setFetchingConfigId(null);
+      setFetchingPlatform(null);
+      setFetchingMode(null);
     } catch (err) {
+      const result: FetchResult = {
+        success: false,
+        platform,
+        fetchMode: fetchMode,
+        error: "网络错误，请检查服务器连接",
+        hotelName,
+        timestamp: new Date(),
+      };
+      
+      setFetchResults(prev => [result, ...prev].slice(0, 10));
       setError("网络错误");
       setFetchingConfigId(null);
       setFetchingPlatform(null);
+      setFetchingMode(null);
     }
   };
 
@@ -182,6 +226,17 @@ export default function ConfigsPage() {
     } catch (err) {
       console.error("删除失败:", err);
     }
+  };
+
+  const getPlatformLabel = (platform: string) => {
+    return platform === "fliggy" ? "飞猪" : "携程";
+  };
+
+  const getFetchModeLabel = (mode?: string) => {
+    if (!mode) return "";
+    if (mode === "cdp") return " (CDP)";
+    if (mode === "api") return " (API)";
+    return "";
   };
 
   const isFetching = fetchStatus?.isRunning;
@@ -266,7 +321,7 @@ export default function ConfigsPage() {
                   </div>
                   <div className="grid gap-2">
                     <Label>拉取模式</Label>
-                    <Select value={fetchMode} onValueChange={setFetchMode}>
+                    <Select value={fetchModeInput} onValueChange={setFetchModeInput}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -295,7 +350,7 @@ export default function ConfigsPage() {
                   <p className="font-medium">
                     正在拉取: {currentFetchingHotel} 
                     <span className="ml-2 text-sm text-muted-foreground">
-                      ({currentFetchingPlatform === "fliggy" ? "飞猪" : "携程"})
+                      ({getPlatformLabel(currentFetchingPlatform || "")}{getFetchModeLabel(fetchingMode)})
                     </span>
                   </p>
                   {progress && (
@@ -309,7 +364,63 @@ export default function ConfigsPage() {
           </Card>
         )}
 
-        {error && !isFetching && (
+        {fetchResults.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>拉取结果</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setFetchResults([])}
+                  className="text-muted-foreground"
+                >
+                  清除
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {fetchResults.map((result, index) => (
+                  <div 
+                    key={index}
+                    className={`flex items-center gap-3 p-3 rounded-lg ${
+                      result.success 
+                        ? 'bg-green-50 border border-green-200' 
+                        : 'bg-red-50 border border-red-200'
+                    }`}
+                  >
+                    {result.success ? (
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-red-500" />
+                    )}
+                    <div className="flex-1">
+                      <p className={`font-medium ${result.success ? 'text-green-700' : 'text-red-700'}`}>
+                        {result.hotelName} - {getPlatformLabel(result.platform)}{getFetchModeLabel(result.fetchMode)}
+                      </p>
+                      {result.success ? (
+                        <p className="text-sm text-green-600">
+                          成功拉取 <span className="font-semibold">{result.newCount}</span> 条评价
+                          {result.totalPages && ` · 共 ${result.totalPages} 页`}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-red-600">
+                          失败: {result.error}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        {result.timestamp.toLocaleString('zh-CN')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {error && !isFetching && fetchResults.length === 0 && (
           <Card className="border-red-500">
             <CardContent className="py-4">
               <p className="text-red-500">{error}</p>

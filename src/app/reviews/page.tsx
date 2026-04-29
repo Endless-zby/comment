@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Star, Image, MessageCircle, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Image, MessageCircle, RefreshCw, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Review {
@@ -52,6 +52,7 @@ export default function ReviewsPage() {
   const [platformFilter, setPlatformFilter] = useState("all");
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, pageSize: 20, total: 0, totalPages: 0 });
 
   useEffect(() => {
@@ -115,6 +116,43 @@ export default function ReviewsPage() {
 
   const handlePageChange = (newPage: number) => {
     loadReviews(newPage);
+  };
+
+  const handleExport = async () => {
+    if (!selectedHotelId) return;
+    
+    setExporting(true);
+    try {
+      const params = new URLSearchParams({
+        hotelId: selectedHotelId,
+        rating: ratingFilter,
+        platform: platformFilter,
+      });
+      
+      if (keyword) {
+        params.set("keyword", keyword);
+      }
+
+      const res = await fetch(`/api/reviews/export?${params}`);
+      if (!res.ok) {
+        throw new Error("导出失败");
+      }
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = decodeURIComponent(res.headers.get("Content-Disposition")?.split("filename*=UTF-8''")[1] || "评价导出.xlsx");
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("导出失败:", err);
+      alert("导出失败，请重试");
+    } finally {
+      setExporting(false);
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -216,6 +254,10 @@ export default function ReviewsPage() {
               <Button variant="outline" onClick={() => loadReviews(pagination.page)} disabled={loading}>
                 <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 刷新
+              </Button>
+              <Button variant="outline" onClick={handleExport} disabled={exporting || !selectedHotelId}>
+                <Download className={`h-4 w-4 ${exporting ? 'animate-pulse' : ''}`} />
+                {exporting ? '导出中...' : '导出Excel'}
               </Button>
             </div>
           </CardContent>
