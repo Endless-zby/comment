@@ -284,9 +284,9 @@ export default function ReviewsPage() {
             <CardHeader>
               <CardTitle>
                 评价列表 ({pagination.total} 条)
-                {selectedHotelId && hotels.find(h => h.hotelId === selectedHotelId) && (
+                {selectedHotelId && hotels.find(h => String(h.id) === selectedHotelId) && (
                   <span className="text-sm text-muted-foreground ml-2">
-                    - {hotels.find(h => h.hotelId === selectedHotelId)?.hotelName}
+                    - {hotels.find(h => String(h.id) === selectedHotelId)?.hotelName}
                     {platformFilter !== "all" && ` (${platformFilter === "fliggy" ? "飞猪" : "携程"})`}
                   </span>
                 )}

@@ -101,8 +101,13 @@ export async function getBrowser(mode: "normal" | "stealth" = "normal"): Promise
   
   const puppeteer = mode === "stealth" ? puppeteerExtra : puppeteerBase;
   
+  const isDocker = process.env.NODE_ENV === "production" || process.env.PUPPETEER_EXECUTABLE_PATH;
+  const headless = isDocker ? true : false;
+  const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
+  
   browser = await puppeteer.launch({
-    headless: false,
+    headless,
+    executablePath,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -123,6 +128,11 @@ export async function getBrowser(mode: "normal" | "stealth" = "normal"): Promise
       "--use-fake-device-for-media-stream",
       "--disable-features=PermissionsApi",
       "--disable-color-correct-rendering",
+      ...(isDocker ? [
+        "--disable-software-rasterizer",
+        "--disable-web-security",
+        "--disable-features=IsolateOrigins,site-per-process",
+      ] : []),
     ],
     ignoreDefaultArgs: ["--enable-automation"],
     defaultViewport: null,
