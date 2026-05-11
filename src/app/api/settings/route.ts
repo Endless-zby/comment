@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-const FLIGGY_COOKIE_KEY = "fliggy_cookie";
-
 export async function GET() {
   try {
     const settings = await prisma.globalSetting.findMany();
@@ -35,11 +33,4 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json({ error: "保存设置失败" }, { status: 500 });
   }
-}
-
-export async function getFliggyCookie(): Promise<string | null> {
-  const setting = await prisma.globalSetting.findUnique({
-    where: { key: FLIGGY_COOKIE_KEY },
-  });
-  return setting?.value ?? null;
 }

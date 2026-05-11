@@ -8,13 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Cookie, Save, Loader2, CheckCircle } from "lucide-react";
+import { Cookie, Save, Loader2, CheckCircle, Key } from "lucide-react";
 
 export default function SettingsPage() {
   const [fliggyCookie, setFliggyCookie] = useState("");
+  const [deepseekApiKey, setDeepseekApiKey] = useState("");
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [savingCookie, setSavingCookie] = useState(false);
+  const [savingApiKey, setSavingApiKey] = useState(false);
+  const [cookieSaved, setCookieSaved] = useState(false);
+  const [apiKeySaved, setApiKeySaved] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -27,6 +30,7 @@ export default function SettingsPage() {
       if (res.ok) {
         const data = await res.json();
         setFliggyCookie(data.fliggy_cookie || "");
+        setDeepseekApiKey(data.deepseek_api_key || "");
       }
     } catch (err) {
       console.error("加载设置失败:", err);
@@ -36,8 +40,8 @@ export default function SettingsPage() {
   };
 
   const handleSaveFliggyCookie = async () => {
-    setSaving(true);
-    setSaved(false);
+    setSavingCookie(true);
+    setCookieSaved(false);
     try {
       const res = await fetch("/api/settings", {
         method: "POST",
@@ -50,8 +54,8 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
+        setCookieSaved(true);
+        setTimeout(() => setCookieSaved(false), 2000);
       } else {
         const data = await res.json();
         alert(data.error || "保存失败");
@@ -59,7 +63,35 @@ export default function SettingsPage() {
     } catch (err) {
       alert("网络错误");
     } finally {
-      setSaving(false);
+      setSavingCookie(false);
+    }
+  };
+
+  const handleSaveDeepseekApiKey = async () => {
+    setSavingApiKey(true);
+    setApiKeySaved(false);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          key: "deepseek_api_key",
+          value: deepseekApiKey,
+          description: "DeepSeek API Key（用于 AI 周报生成）",
+        }),
+      });
+
+      if (res.ok) {
+        setApiKeySaved(true);
+        setTimeout(() => setApiKeySaved(false), 2000);
+      } else {
+        const data = await res.json();
+        alert(data.error || "保存失败");
+      }
+    } catch (err) {
+      alert("网络错误");
+    } finally {
+      setSavingApiKey(false);
     }
   };
 
@@ -68,10 +100,71 @@ export default function SettingsPage() {
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">系统设置</h2>
-          <p className="text-muted-foreground">
-            配置系统运行参数
-          </p>
+          <p className="text-muted-foreground">配置系统运行参数</p>
         </div>
+
+        <Card className="border-blue-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5 text-blue-500" />
+              DeepSeek API Key
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+              <p className="font-medium mb-2">使用说明：</p>
+              <ol className="list-decimal list-inside space-y-1 text-blue-700">
+                <li>访问 DeepSeek 开放平台 (platform.deepseek.com) 注册账号</li>
+                <li>在 API Keys 页面创建新的 API Key</li>
+                <li>将 API Key 粘贴到下方输入框并保存</li>
+                <li>保存后即可在 &quot;AI 周报&quot; 页面生成评价摘要报告</li>
+              </ol>
+            </div>
+            <div className="grid gap-2">
+              <Label>API Key</Label>
+              <Input
+                type="password"
+                placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+                value={deepseekApiKey}
+                onChange={(e) => setDeepseekApiKey(e.target.value)}
+                disabled={loading}
+              />
+              <p className="text-xs text-muted-foreground">
+                用于调用 DeepSeek API 生成评价摘要报告，未配置时将无法使用 AI 周报功能。
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleSaveDeepseekApiKey}
+                disabled={savingApiKey || loading}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                {savingApiKey ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    保存中...
+                  </>
+                ) : apiKeySaved ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    已保存
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    保存 API Key
+                  </>
+                )}
+              </Button>
+              {deepseekApiKey && (
+                <span className="text-sm text-green-600 flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4" />
+                  API Key 已配置
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="border-orange-200">
           <CardHeader>
@@ -93,11 +186,7 @@ export default function SettingsPage() {
             <div className="grid gap-2">
               <Label>飞猪 Cookie (JSON 格式)</Label>
               <Textarea
-                placeholder='从浏览器导出的 Cookie JSON，例如：
-[
-  {"name": "_m_h5_tk", "value": "xxx", "domain": ".alitrip.com"},
-  {"name": "cookie2", "value": "xxx", "domain": ".alitrip.com"}
-]'
+                placeholder={`从浏览器导出的 Cookie JSON，例如：\n[\n  {"name": "_m_h5_tk", "value": "xxx", "domain": ".alitrip.com"},\n  {"name": "cookie2", "value": "xxx", "domain": ".alitrip.com"}\n]`}
                 value={fliggyCookie}
                 onChange={(e) => setFliggyCookie(e.target.value)}
                 rows={10}
@@ -109,17 +198,17 @@ export default function SettingsPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button 
-                onClick={handleSaveFliggyCookie} 
-                disabled={saving || loading}
+              <Button
+                onClick={handleSaveFliggyCookie}
+                disabled={savingCookie || loading}
                 className="bg-orange-500 hover:bg-orange-600"
               >
-                {saving ? (
+                {savingCookie ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     保存中...
                   </>
-                ) : saved ? (
+                ) : cookieSaved ? (
                   <>
                     <CheckCircle className="h-4 w-4 mr-2" />
                     已保存
@@ -174,9 +263,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>保留原始 JSON</Label>
-                <p className="text-sm text-muted-foreground">
-                  保存评价的完整原始 JSON 数据
-                </p>
+                <p className="text-sm text-muted-foreground">保存评价的完整原始 JSON 数据</p>
               </div>
               <Switch defaultChecked />
             </div>

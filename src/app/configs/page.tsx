@@ -228,11 +228,11 @@ export default function ConfigsPage() {
     }
   };
 
-  const getPlatformLabel = (platform: string) => {
+  const getPlatformLabel = (platform: string | null | undefined) => {
     return platform === "fliggy" ? "飞猪" : "携程";
   };
 
-  const getFetchModeLabel = (mode?: string) => {
+  const getFetchModeLabel = (mode?: string | null) => {
     if (!mode) return "";
     if (mode === "cdp") return " (CDP)";
     if (mode === "api") return " (API)";

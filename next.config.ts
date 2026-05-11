@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     "puppeteer-extra",
     "puppeteer-extra-plugin-stealth",
     "better-sqlite3",
+    "@prisma/client",
   ],
 };
 

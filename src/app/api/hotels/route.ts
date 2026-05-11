@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
         ctripHotelId: body.ctripHotelId || null,
         fliggyHotelId: body.fliggyHotelId || null,
         city: body.city || null,
+        onboardDate: body.onboardDate || new Date().toISOString().split("T")[0],
       },
     });
     return NextResponse.json(hotel, { status: 201 });

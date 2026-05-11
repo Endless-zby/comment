@@ -4,6 +4,7 @@ export interface Hotel {
   ctripHotelId: string | null;
   fliggyHotelId: string | null;
   city: string | null;
+  onboardDate: string | null;
   totalReviews: number;
   avgScore: number | null;
   isActive: boolean;
@@ -110,4 +111,81 @@ export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
+}
+
+export interface RatingDistribution {
+  rating: number;
+  count: number;
+  percentage: number;
+}
+
+export interface HotelScoreComparison {
+  hotelId: number;
+  hotelName: string;
+  avgScore: number;
+  totalReviews: number;
+  goodRate: number;
+  neutralRate: number;
+  badRate: number;
+}
+
+export interface PlatformComparison {
+  platform: string;
+  platformLabel: string;
+  totalReviews: number;
+  avgScore: number;
+  goodRate: number;
+  neutralRate: number;
+  badRate: number;
+}
+
+export interface SentimentTimeline {
+  date: string;
+  goodRate: number;
+  neutralRate: number;
+  badRate: number;
+  avgScore: number;
+  totalCount: number;
+}
+
+export interface ReplyRateTrend {
+  date: string;
+  totalReviews: number;
+  repliedCount: number;
+  replyRate: number;
+}
+
+export interface HeatmapData {
+  date: string;
+  count: number;
+}
+
+export interface WordCloudItem {
+  text: string;
+  value: number;
+}
+
+export interface BadReviewItem {
+  id: number;
+  hotelName: string;
+  rating: number;
+  content: string | null;
+  reviewer: string | null;
+  reviewDate: string | null;
+  hotelReply: string | null;
+  platform: string;
+}
+
+export interface WeeklySummaryRequest {
+  hotelId?: string;
+  weekStart?: string;
+  weekEnd?: string;
+}
+
+export interface WeeklySummaryResponse {
+  success: boolean;
+  summary: string;
+  weekRange: string;
+  hotelName: string;
+  generatedAt: string;
 }

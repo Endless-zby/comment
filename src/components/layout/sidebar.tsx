@@ -10,6 +10,8 @@ import {
   MessageSquare,
   BarChart3,
   Settings,
+  Cloud,
+  Sparkles,
 } from "lucide-react";
 
 const navItems = [
@@ -18,6 +20,8 @@ const navItems = [
   { href: "/configs", label: "拉取配置", icon: Settings2 },
   { href: "/reviews", label: "评价列表", icon: MessageSquare },
   { href: "/stats", label: "评价统计", icon: BarChart3 },
+  { href: "/wordcloud", label: "评价词云", icon: Cloud },
+  { href: "/ai-report", label: "AI 周报", icon: Sparkles },
   { href: "/settings", label: "系统设置", icon: Settings },
 ];
 

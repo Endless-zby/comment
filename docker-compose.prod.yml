@@ -1,0 +1,35 @@
+version: '3.8'
+
+# =============================================================================
+#  酒店评价监控系统 - 生产环境部署
+# 
+#  使用方法（拉取镜像启动，无需源码）:
+#    docker compose -f docker-compose.prod.yml up -d
+# 
+#  需要先登录 Docker Hub:
+#    docker login
+# =============================================================================
+
+services:
+  comment-monitor:
+    image: ${DOCKER_REGISTRY:-yourusername}/ctrip-review-monitor:latest
+    container_name: ctrip-review-monitor
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/prisma/data/reviews.db
+    volumes:
+      - review_data:/app/prisma/data
+    shm_size: '2gb'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/hotels"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  review_data:
+    driver: local

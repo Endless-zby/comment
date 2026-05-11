@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -13,6 +14,7 @@ model Hotel {
   ctripHotelId   String?   @unique @map("ctrip_hotel_id")
   fliggyHotelId  String?   @unique @map("fliggy_hotel_id")
   city           String?
+  onboardDate    String?   @map("onboard_date")
   totalReviews   Int       @default(0) @map("total_reviews")
   avgScore       Float?    @map("avg_score")
   isActive       Boolean   @default(true) @map("is_active")
@@ -21,6 +23,7 @@ model Hotel {
   configs        Config[]
   reviews        Review[]
   fetchLogs      FetchLog[]
+  aiReport       AiReport?
 
   @@index([ctripHotelId])
   @@index([fliggyHotelId])
@@ -106,4 +109,20 @@ model GlobalSetting {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("global_settings")
+}
+
+model AiReport {
+  id            Int       @id @default(autoincrement())
+  hotelId       Int       @map("hotel_id")
+  summary       String
+  weekRange     String    @map("week_range")
+  hotelName     String    @map("hotel_name")
+  reviewCount   Int       @default(0) @map("review_count")
+  avgScore      Float?    @map("avg_score")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  hotel         Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@unique([hotelId])
+  @@map("ai_reports")
 }

@@ -54,6 +54,9 @@ export async function PUT(
     if (body.avgScore !== undefined) {
       updateData.avgScore = body.avgScore;
     }
+    if (body.onboardDate !== undefined) {
+      updateData.onboardDate = body.onboardDate || null;
+    }
     
     const hotel = await prisma.hotel.update({
       where: { id: parseInt(id) },
