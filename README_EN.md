@@ -12,8 +12,9 @@ Ctrip Hotel Review Monitor is a hotel review data collection and management plat
 
 - **Multi-Platform Support**: Supports both Ctrip and Fliggy OTA platforms
 - **Auto Collection**: Scheduled automatic review fetching with incremental updates
-- **Data Management**: Hotel info management, fetch configuration, log tracking
-- **Data Analysis**: Rating distribution, trend analysis, weekly summaries
+- **Data Visualization**: Weekly trends, rating trends, sentiment timeline, distribution, heatmap, word cloud and more
+- **Onboard Date Markers**: Set onboard date per hotel; displayed as reference lines on time-series charts for before/after comparison
+- **AI Weekly Report**: Auto-generated review summaries via DeepSeek AI, saved for historical viewing
 - **Data Filtering**: Multi-dimensional filtering by hotel, platform, rating, keyword
 - **Data Export**: Excel export with complete review information
 
@@ -36,6 +37,7 @@ Ctrip Hotel Review Monitor is a hotel review data collection and management plat
 | Scheduling | node-cron |
 | Data Export | xlsx |
 | Visualization | Recharts |
+| Deployment | Docker |
 
 ## Project Structure
 
@@ -71,6 +73,34 @@ src/
 
 ## Quick Start
 
+### Method 1: Docker (Recommended - No Dependencies Required)
+
+```bash
+docker run -d \
+  --name ctrip-review \
+  -p 3000:3000 \
+  -v review_data:/app/prisma/data \
+  --shm-size=2gb \
+  --restart unless-stopped \
+  zhaoboya/ctrip-review-monitor:latest
+```
+
+Visit http://localhost:3000
+
+> The image includes Node.js, Google Chrome, and all compiled artifacts. No dependencies need to be installed on the host.
+
+**Mount an existing database:**
+
+```bash
+# Linux/Mac
+docker run -d ... -v /path/to/your/data:/app/prisma/data ...
+
+# Windows
+docker run -d ... -v "D:\my_data:/app/prisma/data" ...
+```
+
+### Method 2: Source Code Development
+
 ### Requirements
 
 - Node.js >= 18.0
@@ -101,6 +131,14 @@ npm run dev
 ### Access
 
 Open browser and visit http://localhost:3000
+
+### Data Model
+
+#### Hotel
+- Name, Ctrip ID, Fliggy ID
+- City, Onboard Date, Total Reviews, Average Score
+- Active Status, Created At
+- **Onboard Date**: Optional, YYYY-MM-DD. Displayed as reference line on time-series charts for before/after comparison.
 
 ## Main Pages
 

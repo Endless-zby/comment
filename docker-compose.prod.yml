@@ -12,7 +12,7 @@ version: '3.8'
 
 services:
   comment-monitor:
-    image: ${DOCKER_REGISTRY:-yourusername}/ctrip-review-monitor:latest
+    image: zhaoboya/ctrip-review-monitor:latest
     container_name: ctrip-review-monitor
     restart: unless-stopped
     ports:

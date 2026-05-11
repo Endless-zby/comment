@@ -44,20 +44,50 @@ Ctrip Hotel Review Monitor is a hotel review data collection and management plat
 |------|---------|
 | 多平台支持（携程/飞猪） | Multi-platform support (Ctrip/Fliggy) |
 | 自动采集与增量更新 | Auto collection with incremental updates |
-| 数据可视化分析 | Data visualization and analysis |
+| 数据可视化与入驻日期标记 | Data visualization with onboard date markers |
+| AI 评价摘要报告（DeepSeek） | AI-powered weekly review summary (DeepSeek) |
 | 多维度筛选 | Multi-dimensional filtering |
 | Excel数据导出 | Excel data export |
 | 定时任务管理 | Scheduled task management |
+| Docker 一键部署 | One-click Docker deployment |
 
 ---
 
 ## 技术栈 | Tech Stack
 
-`Next.js 15` · `React 19` · `shadcn/ui` · `Tailwind CSS` · `Prisma ORM` · `SQLite` · `Puppeteer` · `node-cron` · `Recharts`
+`Next.js 15` · `React 19` · `shadcn/ui` · `Tailwind CSS` · `Prisma ORM` · `SQLite` · `Puppeteer` · `node-cron` · `Recharts` · `Docker`
 
 ---
 
 ## 快速开始 | Quick Start
+
+### 方式一：Docker 部署（推荐，无需安装依赖）
+
+```bash
+docker run -d \
+  --name ctrip-review \
+  -p 3000:3000 \
+  -v review_data:/app/prisma/data \
+  --shm-size=2gb \
+  --restart unless-stopped \
+  zhaoboya/ctrip-review-monitor:latest
+```
+
+访问 http://localhost:3000
+
+> 容器内已包含 Node.js、Google Chrome、编译后的 Web 产物，无需在宿主机安装任何依赖。
+
+**挂载外部数据库：**
+
+```bash
+# Linux/Mac
+docker run -d ... -v /path/to/your/data:/app/prisma/data ...
+
+# Windows
+docker run -d ... -v "D:\my_data:/app/prisma/data" ...
+```
+
+### 方式二：源码开发
 
 ```bash
 # 安装依赖 | Install dependencies
