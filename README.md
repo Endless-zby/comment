@@ -1,67 +1,31 @@
-# 携程酒店评价监控系统 | Ctrip Hotel Review Monitor
-
 <div align="center">
 
-**酒店评价数据采集与管理平台**
-
-**Hotel Review Data Collection and Management Platform**
-
----
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev/)
-[![Prisma](https://img.shields.io/badge/Prisma-ORM-green.svg)](https://prisma.io/)
+<img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License">
+<img src="https://img.shields.io/badge/Next.js-15-black.svg?style=flat-square&logo=next.js" alt="Next.js">
+<img src="https://img.shields.io/badge/React-19-61DAFB.svg?style=flat-square&logo=react" alt="React">
+<img src="https://img.shields.io/badge/Prisma-ORM-2D3748.svg?style=flat-square&logo=prisma" alt="Prisma">
+<img src="https://img.shields.io/badge/Docker-available-2496ED.svg?style=flat-square&logo=docker" alt="Docker">
 
 </div>
 
----
+<br>
 
-## 选择语言 | Select Language
+# Hotel Review Monitor
 
-| 语言 | 文档 |
-|------|------|
-| 🇨🇳 **中文** | [README_CN.md](README_CN.md) |
-| 🇺🇸 **English** | [README_EN.md](README_EN.md) |
+**酒店评价监控系统** — 从携程、飞猪等 OTA 平台自动采集酒店评价，提供多维数据可视化与 AI 驱动的智能分析。
 
----
-
-## 项目简介 | Project Overview
-
-### 中文
-
-携程酒店评价监控系统是一个基于 Next.js 开发的酒店评价数据采集与管理平台。系统支持从携程和飞猪平台自动抓取酒店评价数据，提供数据可视化分析、评价筛选、数据导出等功能。
-
-### English
-
-Ctrip Hotel Review Monitor is a hotel review data collection and management platform built with Next.js. The system automatically scrapes hotel review data from Ctrip and Fliggy platforms, providing data visualization, filtering, and export capabilities.
+*Automated hotel review collection from Ctrip & Fliggy, with multi-dimensional analytics and AI-powered insights.*
 
 ---
 
-## 核心功能 | Core Features
+## 📖 Documentation
 
-| 功能 | Feature |
-|------|---------|
-| 多平台支持（携程/飞猪） | Multi-platform support (Ctrip/Fliggy) |
-| 自动采集与增量更新 | Auto collection with incremental updates |
-| 数据可视化与入驻日期标记 | Data visualization with onboard date markers |
-| AI 评价摘要报告（DeepSeek） | AI-powered weekly review summary (DeepSeek) |
-| 多维度筛选 | Multi-dimensional filtering |
-| Excel数据导出 | Excel data export |
-| 定时任务管理 | Scheduled task management |
-| Docker 一键部署 | One-click Docker deployment |
+| Language | Document |
+|:--------:|:---------|
+| 🇨🇳 **简体中文** | [README_CN.md](./README_CN.md) |
+| 🇺🇸 **English** | [README_EN.md](./README_EN.md) |
 
----
-
-## 技术栈 | Tech Stack
-
-`Next.js 15` · `React 19` · `shadcn/ui` · `Tailwind CSS` · `Prisma ORM` · `SQLite` · `Puppeteer` · `node-cron` · `Recharts` · `Docker`
-
----
-
-## 快速开始 | Quick Start
-
-### 方式一：Docker 部署（推荐，无需安装依赖）
+## 🚀 Quick Start
 
 ```bash
 docker run -d \
@@ -70,51 +34,23 @@ docker run -d \
   -v review_data:/app/prisma/data \
   --shm-size=2gb \
   --restart unless-stopped \
+  -e DATABASE_URL=file:/app/prisma/data/reviews.db \
   zhaoboya/ctrip-review-monitor:latest
 ```
 
-访问 http://localhost:3000
+Then open **http://localhost:3000**
 
-> 容器内已包含 Node.js、Google Chrome、编译后的 Web 产物，无需在宿主机安装任何依赖。
+> The image includes Node.js, Google Chrome, and all compiled artifacts — **no host dependencies needed**. For detailed installation, database mounting, and source-code development, see [简体中文](./README_CN.md) or [English](./README_EN.md).
 
-**挂载外部数据库：**
+## ✨ Highlights
 
-```bash
-# Linux/Mac
-docker run -d ... -v /path/to/your/data:/app/prisma/data ...
+- 🔍 **Multi-Platform** — Ctrip & Fliggy, with CDP-based anti-detection
+- 📊 **Rich Charts** — Trends, sentiment timelines, heatmaps, word clouds
+- 🗓️ **Onboard Date Markers** — Before/after comparison on time-series charts
+- 🤖 **AI Weekly Reports** — Auto-generated summaries via DeepSeek
+- 🐳 **One-Click Docker** — Pull and run, Chrome included
+- 📦 **SQLite + Prisma** — Zero external database dependencies
 
-# Windows
-docker run -d ... -v "D:\my_data:/app/prisma/data" ...
-```
+## 📜 License
 
-### 方式二：源码开发
-
-```bash
-# 安装依赖 | Install dependencies
-npm install
-
-# 初始化数据库 | Initialize database
-npm run db:push && npm run db:generate
-
-# 启动服务 | Start server
-npm run dev
-```
-
-访问 http://localhost:3000
-
----
-
-## 相关文档 | Related Documents
-
-| 文档 | 说明 |
-|------|------|
-| [USAGE.md](USAGE.md) | 详细操作说明 |
-| [LICENSE.md](LICENSE.md) | MIT 开源协议 |
-
----
-
-<div align="center">
-
-**Made with ❤️ by Ctrip Review Monitor Team**
-
-</div>
+This project is licensed under the [MIT License](./LICENSE.md).
