@@ -392,3 +392,106 @@ npx prisma generate
 - 错误处理是否覆盖所有异常路径
 - 日志记录是否充分
 - 常量是否集中管理
+
+---
+
+### 七、Docker 构建与推送
+
+每次修改代码后，如需更新 Docker Hub 上的镜像，按以下步骤操作。
+
+#### 7.1 关键文件速览
+
+| 文件 | 作用 |
+|------|------|
+| `Dockerfile` | 三阶段构建：deps → builder → runner（含 Chrome） |
+| `docker-entrypoint.sh` | 容器启动入口，自动执行 `prisma db push` |
+| `docker-compose.yml` | 开发环境 Compose（指定 build 上下文） |
+| `docker-compose.prod.yml` | 生产环境 Compose（直接用镜像，免源码） |
+| `.dockerignore` | 排除 `node_modules`、`.next`、`.env`、`*.db` |
+| `next.config.ts` | `output: "standalone"` + `serverExternalPackages` |
+
+#### 7.2 构建核心要点
+
+```typescript
+// next.config.ts — 保证 standalone 输出
+const nextConfig: NextConfig = {
+  output: "standalone",              // 自包含输出
+  serverExternalPackages: [          // 不打包进 bundle 的包
+    "puppeteer",
+    "puppeteer-extra",
+    "puppeteer-extra-plugin-stealth",
+    "better-sqlite3",
+    "@prisma/client",
+  ],
+};
+```
+
+```prisma
+// prisma/schema.prisma — Docker 环境必需的 binaryTargets
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+```
+
+#### 7.3 完整构建命令
+
+```bash
+# 1. 确保 Prisma Client 是最新的（停止 dev server 后执行）
+npx prisma generate
+
+# 2. 构建镜像（当前目录执行）
+docker build -t ctrip-review-monitor:latest .
+```
+
+构建耗时约 3-5 分钟，包含三步：
+1. deps 阶段：pnpm 安装依赖（首次慢，后续缓存）
+2. builder 阶段：`prisma generate` + `pnpm build`（Next.js standalone 输出）
+3. runner 阶段：安装 Chrome 运行库 + 解包 Chrome `.deb` + 安装 `prisma@6` CLI
+
+#### 7.4 本地验证
+
+```bash
+# 先停掉当前容器（如果有）
+docker rm -f ctrip-review-monitor 2>/dev/null
+
+# 用本地数据库启动验证
+docker run -d \
+  --name ctrip-review-monitor \
+  -p 3000:3000 \
+  -v "`pwd`/prisma/data:/app/prisma/data" \
+  --shm-size=2gb \
+  -e NODE_ENV=production \
+  -e DATABASE_URL=file:/app/prisma/data/reviews.db \
+  ctrip-review-monitor:latest
+
+# 检查 Chrome 是否正常
+docker exec ctrip-review-monitor google-chrome-stable --version
+
+# 检查 API
+curl http://localhost:3000/api/hotels
+```
+
+#### 7.5 推送到 Docker Hub
+
+```bash
+# 登录（只需首次执行一次）
+docker login
+
+# 打标签
+docker tag ctrip-review-monitor:latest zhaoboya/ctrip-review-monitor:latest
+
+# 推送
+docker push zhaoboya/ctrip-review-monitor:latest
+```
+
+#### 7.6 常见坑
+
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| Chrome 找不到共享库 (`libglib` 等) | `dpkg-deb -x` 解包不装依赖 | Dockerfile 预先 `apt-get install libglib2.0-0 libnss3 ...` |
+| `prisma: "unknown option --skip-generate"` | 全局装了 Prisma v7 | 锁定 `npm install -g prisma@6` |
+| Prisma Client 引擎不匹配 | 未添加 `binaryTargets` | schema.prisma 加 `debian-openssl-3.0.x` |
+| Debian 官方源 502 | 大陆网络访问 deb.debian.org 不稳定 | 已将 openssl 等必要包内置于镜像 |
+| pnpm `packages field missing` | `pnpm-workspace.yaml` 格式不完整 | 确认 `packages: []` 存在 |
+| Windows 下 `prisma generate` 报 EPERM | dev server 锁了 native engine DLL | 先 `Ctrl+C` 停掉 dev server |
