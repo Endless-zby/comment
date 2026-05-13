@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 const INITIAL_FETCH_PAGES = 5;
 const TARGET_PAGE_SIZE = 50;
+const CTRIP_COOKIE_KEY = "ctrip_cookie";
 
 interface CtripReviewData {
   commentId: string;
@@ -36,6 +37,13 @@ let currentFetchStatus = {
 
 export function getFetchStatus() {
   return currentFetchStatus;
+}
+
+async function getGlobalCtripCookie(): Promise<string | null> {
+  const setting = await prisma.globalSetting.findUnique({
+    where: { key: CTRIP_COOKIE_KEY },
+  });
+  return setting?.value ?? null;
 }
 
 export async function fetchReviews(
@@ -91,7 +99,6 @@ export async function fetchReviews(
 
     client.on("Fetch.requestPaused", async (params: any) => {
       const url = params.request.url;
-      const stage = params.resourceType;
       
       if (params.request && !params.responseHeaders) {
         console.log(`[Fetch] 拦截请求阶段: ${url.substring(0, 100)}...`);
@@ -146,6 +153,15 @@ export async function fetchReviews(
         console.log(`[Fetch] 拦截响应阶段: ${url.substring(0, 100)}...`);
         
         try {
+          const statusCode = params.responseStatusCode;
+          if (statusCode && statusCode >= 400) {
+            console.log(`[Fetch] 响应状态码异常: ${statusCode}，跳过`);
+            await client.send("Fetch.continueResponse", {
+              requestId: params.requestId,
+            });
+            return;
+          }
+
           const response = await client.send("Fetch.getResponseBody", {
             requestId: params.requestId,
           });
@@ -156,22 +172,34 @@ export async function fetchReviews(
           
           console.log(`[Fetch] 获取响应体长度: ${body.length}`);
           
-          const json = JSON.parse(body);
-          const reviews = parseCommentListResponse(json);
-          console.log(`[Fetch] 从响应解析 ${reviews.length} 条评价`);
-          
-          if (reviews.length > 0) {
-            capturedReviews.push(...reviews);
+          if (body.length === 0) {
+            console.log(`[Fetch] 响应体为空，携程可能触发了反爬机制，跳过`);
+            await client.send("Fetch.continueResponse", {
+              requestId: params.requestId,
+            });
+            return;
           }
           
-          await client.send("Fetch.continueRequest", {
+          try {
+            const json = JSON.parse(body);
+            const reviews = parseCommentListResponse(json);
+            console.log(`[Fetch] 从响应解析 ${reviews.length} 条评价`);
+            
+            if (reviews.length > 0) {
+              capturedReviews.push(...reviews);
+            }
+          } catch (parseErr: any) {
+            console.log(`[Fetch] JSON解析失败: ${parseErr.message}, 响应体前200字符: ${body.substring(0, 200)}`);
+          }
+          
+          await client.send("Fetch.continueResponse", {
             requestId: params.requestId,
           });
         } catch (err: any) {
           console.log(`[Fetch] 处理响应失败: ${err.message}`);
           
           try {
-            await client.send("Fetch.continueRequest", {
+            await client.send("Fetch.continueResponse", {
               requestId: params.requestId,
             });
           } catch {}
@@ -272,28 +300,14 @@ export async function fetchReviews(
         hotelId,
         platform: "ctrip",
         success: true,
-        fetchMode: "full",
+        fetchMode: "cdp",
         newCount: allReviews.length,
         totalFetched: allReviews.length,
         pagesFetched: currentPage,
       },
     });
 
-    const allPlatformReviews = await prisma.review.findMany({
-      where: { hotelId },
-      select: { rating: true },
-    });
-
-    if (allPlatformReviews.length > 0) {
-      const avgScore = allPlatformReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / allPlatformReviews.length;
-      await prisma.hotel.update({
-        where: { id: hotelId },
-        data: {
-          totalReviews: allPlatformReviews.length,
-          avgScore,
-        },
-      });
-    }
+    await updateHotelStats(hotelId);
 
     currentFetchStatus = {
       isRunning: false,
@@ -340,6 +354,231 @@ export async function fetchReviews(
     isFetching = false;
 
     throw error;
+  }
+}
+
+export async function fetchCtripReviewsByApi(
+  ctripHotelId: string,
+  hotelId: number,
+  hotelName: string,
+  configId: number,
+  onProgress?: (page: number, newCount: number) => void
+): Promise<FetchResult> {
+  if (isFetching) {
+    throw new Error("已有拉取任务正在运行");
+  }
+
+  isFetching = true;
+  currentFetchStatus = {
+    isRunning: true,
+    currentHotelId: hotelId,
+    currentHotelName: hotelName,
+    currentPlatform: "ctrip",
+    progress: { currentPage: 0, newCount: 0, totalPages: 0 },
+  };
+
+  try {
+    const globalCookie = await getGlobalCtripCookie();
+
+    if (!globalCookie) {
+      throw new Error("请先在系统设置中配置携程 Cookie");
+    }
+
+    let cookieString = globalCookie;
+    try {
+      const cookies = JSON.parse(cookieString);
+      if (Array.isArray(cookies)) {
+        cookieString = cookies.map((c: { name: string; value: string }) => `${c.name}=${c.value}`).join("; ");
+      }
+    } catch {
+      console.log("[Ctrip API] Cookie 格式为字符串，直接使用");
+    }
+
+    const allReviews: CtripReviewData[] = [];
+    let currentPage = 1;
+    const maxPages = 10;
+    let consecutiveEmptyPages = 0;
+
+    while (currentPage <= maxPages && consecutiveEmptyPages < 2) {
+      console.log(`[Ctrip API] 正在获取第 ${currentPage} 页...`);
+
+      const requestBody = {
+        hotelId: ctripHotelId,
+        pageSize: TARGET_PAGE_SIZE,
+        orderBy: 1,
+        pageType: "hotelDetail",
+        pageIndex: currentPage,
+        roomName: "",
+        tagType: -1,
+        tagId: 0,
+        travelType: -1,
+        hasImage: false,
+        isDetail: false,
+      };
+
+      try {
+        const response = await fetch(
+          "https://m.ctrip.com/restapi/soa2/33278/getHotelCommentList",
+          {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              accept: "application/json",
+              "accept-language": "zh-CN,zh;q=0.9",
+              cookie: cookieString,
+              referer: `https://hotels.ctrip.com/hotels/${ctripHotelId}.html`,
+              "user-agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+              origin: "https://hotels.ctrip.com",
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        if (!response.ok) {
+          console.log(`[Ctrip API] 第 ${currentPage} 页请求失败: ${response.status}`);
+          break;
+        }
+
+        const json = await response.json();
+
+        if (!json || !json.data || !json.data.commentList) {
+          console.log(`[Ctrip API] 第 ${currentPage} 页返回数据异常，可能 Cookie 已过期`);
+          if (currentPage === 1 && allReviews.length === 0) {
+            throw new Error("携程 API 返回数据异常，Cookie 可能已过期，请重新配置");
+          }
+          break;
+        }
+
+        const reviews = parseCommentListResponse(json);
+        console.log(`[Ctrip API] 第 ${currentPage} 页获取到 ${reviews.length} 条评价`);
+
+        if (reviews.length === 0) {
+          consecutiveEmptyPages++;
+          console.log(`[Ctrip API] 连续空页: ${consecutiveEmptyPages}`);
+          if (consecutiveEmptyPages >= 2) {
+            console.log("[Ctrip API] 连续两页无评价，停止翻页");
+            break;
+          }
+        } else {
+          consecutiveEmptyPages = 0;
+          allReviews.push(...reviews);
+        }
+
+        currentFetchStatus.progress = {
+          currentPage,
+          newCount: allReviews.length,
+          totalPages: currentPage,
+        };
+
+        onProgress?.(currentPage, allReviews.length);
+
+        const totalCount = json.data?.totalCount || 0;
+        if (totalCount > 0 && allReviews.length >= totalCount) {
+          console.log(`[Ctrip API] 已获取全部评价 (${allReviews.length}/${totalCount})`);
+          break;
+        }
+
+        currentPage++;
+
+        await sleep(1500 + Math.random() * 1000);
+      } catch (fetchErr: any) {
+        if (fetchErr.message.includes("Cookie")) {
+          throw fetchErr;
+        }
+        console.log(`[Ctrip API] 第 ${currentPage} 页请求异常: ${fetchErr.message}`);
+        break;
+      }
+    }
+
+    console.log(`[Ctrip API] 删除酒店 ${hotelId} 的旧携程评价数据...`);
+    await prisma.review.deleteMany({
+      where: { hotelId, platform: "ctrip" },
+    });
+
+    console.log(`[Ctrip API] 保存 ${allReviews.length} 条新评价...`);
+    await saveReviews(allReviews, hotelId, configId);
+
+    await prisma.config.update({
+      where: { id: configId },
+      data: {
+        lastFetchedAt: new Date(),
+        lastFetchedPage: currentPage,
+        totalFetched: allReviews.length,
+      },
+    });
+
+    await prisma.fetchLog.create({
+      data: {
+        configId,
+        hotelId,
+        platform: "ctrip",
+        success: true,
+        fetchMode: "api",
+        newCount: allReviews.length,
+        totalFetched: allReviews.length,
+        pagesFetched: currentPage,
+      },
+    });
+
+    await updateHotelStats(hotelId);
+
+    currentFetchStatus = {
+      isRunning: false,
+      currentHotelId: null,
+      currentHotelName: null,
+      currentPlatform: null,
+      progress: null,
+    };
+    isFetching = false;
+
+    console.log(`[Ctrip API] 完成！获取并保存 ${allReviews.length} 条评价`);
+
+    return { reviews: allReviews, totalPages: currentPage, newCount: allReviews.length };
+  } catch (error: any) {
+    console.error("[Ctrip API] 错误:", error.message);
+
+    await prisma.fetchLog.create({
+      data: {
+        configId,
+        hotelId,
+        platform: "ctrip",
+        success: false,
+        fetchMode: "api",
+        error: error.message,
+      },
+    });
+
+    currentFetchStatus = {
+      isRunning: false,
+      currentHotelId: null,
+      currentHotelName: null,
+      currentPlatform: null,
+      progress: null,
+    };
+    isFetching = false;
+
+    throw error;
+  }
+}
+
+async function updateHotelStats(hotelId: number): Promise<void> {
+  const allPlatformReviews = await prisma.review.findMany({
+    where: { hotelId },
+    select: { rating: true },
+  });
+
+  if (allPlatformReviews.length > 0) {
+    const avgScore =
+      allPlatformReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) /
+      allPlatformReviews.length;
+    await prisma.hotel.update({
+      where: { id: hotelId },
+      data: {
+        totalReviews: allPlatformReviews.length,
+        avgScore,
+      },
+    });
   }
 }
 

@@ -12,6 +12,7 @@ import { Cookie, Save, Loader2, CheckCircle, Key, ShieldCheck } from "lucide-rea
 
 export default function SettingsPage() {
   const [fliggyCookie, setFliggyCookie] = useState("");
+  const [ctripCookie, setCtripCookie] = useState("");
   const [deepseekApiKey, setDeepseekApiKey] = useState("");
   const [esUrl, setEsUrl] = useState("");
   const [esIndex, setEsIndex] = useState("");
@@ -36,6 +37,7 @@ export default function SettingsPage() {
       if (res.ok) {
         const data = await res.json();
         setFliggyCookie(data.fliggy_cookie || "");
+        setCtripCookie(data.ctrip_cookie || "");
         setDeepseekApiKey(data.deepseek_api_key || "");
         setEsUrl(data.es_url || "");
         setEsIndex(data.es_index || "");
@@ -291,6 +293,96 @@ export default function SettingsPage() {
                 <span className="text-sm text-green-600 flex items-center gap-1">
                   <CheckCircle className="h-4 w-4" />
                   溯源配置已填写
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-green-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Cookie className="h-5 w-5 text-green-500" />
+              携程 Cookie 配置
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800">
+              <p className="font-medium mb-2">使用说明：</p>
+              <ol className="list-decimal list-inside space-y-1 text-green-700">
+                <li>登录携程官网 (hotels.ctrip.com)</li>
+                <li>使用 Chrome 插件 EditThisCookie 或 Cookie-Editor 导出 Cookie</li>
+                <li>将导出的 JSON 格式 Cookie 粘贴到下方输入框</li>
+                <li>保存后，使用 API 模式拉取携程评价时将使用此 Cookie</li>
+              </ol>
+              <p className="mt-2 text-green-600 font-medium">推荐使用 API 模式，比 CDP 浏览器拦截更稳定</p>
+            </div>
+            <div className="grid gap-2">
+              <Label>携程 Cookie (JSON 格式)</Label>
+              <Textarea
+                placeholder={`从浏览器导出的 Cookie JSON，例如：\n[\n  {"name": "_bfa", "value": "xxx", "domain": ".ctrip.com"},\n  {"name": "UUID", "value": "xxx", "domain": ".ctrip.com"}\n]`}
+                value={ctripCookie}
+                onChange={(e) => setCtripCookie(e.target.value)}
+                rows={10}
+                className="font-mono text-xs"
+                disabled={loading}
+              />
+              <p className="text-xs text-muted-foreground">
+                配置后可使用 API 模式直接请求携程接口，无需启动浏览器，速度更快更稳定。
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={async () => {
+                  setSavingCookie(true);
+                  setCookieSaved(false);
+                  try {
+                    const res = await fetch("/api/settings", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        key: "ctrip_cookie",
+                        value: ctripCookie,
+                        description: "携程平台全局 Cookie",
+                      }),
+                    });
+                    if (res.ok) {
+                      setCookieSaved(true);
+                      setTimeout(() => setCookieSaved(false), 2000);
+                    } else {
+                      const data = await res.json();
+                      alert(data.error || "保存失败");
+                    }
+                  } catch {
+                    alert("网络错误");
+                  } finally {
+                    setSavingCookie(false);
+                  }
+                }}
+                disabled={savingCookie || loading}
+                className="bg-green-500 hover:bg-green-600"
+              >
+                {savingCookie ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    保存中...
+                  </>
+                ) : cookieSaved ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    已保存
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    保存 Cookie
+                  </>
+                )}
+              </Button>
+              {ctripCookie && (
+                <span className="text-sm text-green-600 flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4" />
+                  Cookie 已配置
                 </span>
               )}
             </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchReviews, getFetchStatus } from "@/services/crawler/review-fetcher";
+import { fetchReviews, fetchCtripReviewsByApi, getFetchStatus } from "@/services/crawler/review-fetcher";
 import { fetchFliggyReviews, fetchFliggyReviewsByApi, getFliggyFetchStatus } from "@/services/crawler/fliggy-fetcher";
 import { prisma } from "@/lib/prisma";
 
@@ -69,21 +69,39 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "该酒店未配置携程酒店ID" }, { status: 400 });
       }
 
-      const result = await fetchReviews(
-        config.hotel.ctripHotelId,
-        config.hotel.id,
-        config.hotel.hotelName,
-        config.id,
-        config.pageSize,
-        config.fetchMode as "full" | "incremental"
-      );
+      if (fetchMode === "api") {
+        const result = await fetchCtripReviewsByApi(
+          config.hotel.ctripHotelId,
+          config.hotel.id,
+          config.hotel.hotelName,
+          config.id
+        );
 
-      return NextResponse.json({
-        success: true,
-        platform: "ctrip",
-        newCount: result.newCount,
-        totalPages: result.totalPages,
-      });
+        return NextResponse.json({
+          success: true,
+          platform: "ctrip",
+          fetchMode: "api",
+          newCount: result.newCount,
+          totalPages: result.totalPages,
+        });
+      } else {
+        const result = await fetchReviews(
+          config.hotel.ctripHotelId,
+          config.hotel.id,
+          config.hotel.hotelName,
+          config.id,
+          config.pageSize,
+          config.fetchMode as "full" | "incremental"
+        );
+
+        return NextResponse.json({
+          success: true,
+          platform: "ctrip",
+          fetchMode: "cdp",
+          newCount: result.newCount,
+          totalPages: result.totalPages,
+        });
+      }
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

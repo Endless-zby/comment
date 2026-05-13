@@ -473,20 +473,34 @@ export default function ConfigsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         {hasCtripId ? (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                            onClick={() => handleFetch(config.id, "ctrip")}
-                            disabled={isFetching || (fetchingConfigId === config.id && fetchingPlatform === "ctrip")}
-                          >
-                            {fetchingConfigId === config.id && fetchingPlatform === "ctrip" ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Play className="h-4 w-4" />
-                            )}
-                            携程
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                disabled={isFetching || (fetchingConfigId === config.id && fetchingPlatform === "ctrip")}
+                              >
+                                {fetchingConfigId === config.id && fetchingPlatform === "ctrip" ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Play className="h-4 w-4" />
+                                )}
+                                携程
+                                <ChevronDown className="h-3 w-3 ml-1" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleFetch(config.id, "ctrip", "cdp")}>
+                                <Play className="h-4 w-4 mr-2" />
+                                CDP方式拉取
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleFetch(config.id, "ctrip", "api")}>
+                                <Play className="h-4 w-4 mr-2" />
+                                API方式拉取（推荐）
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         ) : (
                           <Button 
                             variant="outline" 
