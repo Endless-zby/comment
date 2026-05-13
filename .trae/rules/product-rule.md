@@ -45,6 +45,9 @@ pnpm build
 # Docker 构建
 docker build -t ctrip-review-monitor:latest .
 
+# Docker 推送
+docker push zhaoboya/ctrip-review-monitor:latest
+
 # Git 操作
 git status; git diff; git add .; git commit -m "message"
 ```
@@ -481,56 +484,92 @@ generator client {
 }
 ```
 
-#### 7.3 完整构建命令
+#### 7.3 完整构建与推送流程
 
-```bash
-# 1. 确保 Prisma Client 是最新的（停止 dev server 后执行）
-npx prisma generate
+> **重要**：当前开发环境为 Windows + PowerShell，命令使用 PowerShell 语法（分号 `;` 替代 `&&`，反引号 `` ` `` 续行）。
 
-# 2. 构建镜像（当前目录执行）
-docker build -t ctrip-review-monitor:latest .
+**第一步：构建镜像**
+
+```powershell
+# 在项目根目录执行
+cd d:\Claude_Project\comment; docker build -t zhaoboya/ctrip-review-monitor:latest .
 ```
 
-构建耗时约 3-5 分钟，包含三步：
+构建耗时约 5-8 分钟，包含三步：
 1. deps 阶段：pnpm 安装依赖（首次慢，后续缓存）
 2. builder 阶段：`prisma generate` + `pnpm build`（Next.js standalone 输出）
 3. runner 阶段：安装 Chrome 运行库 + 解包 Chrome `.deb` + 安装 `prisma@6` CLI
 
-#### 7.4 本地验证
+**第二步：本地验证**
 
-```bash
-# 先停掉当前容器（如果有）
-docker rm -f ctrip-review-monitor 2>/dev/null
+```powershell
+# 停掉旧容器（如果有）
+docker rm -f ctrip-review-monitor 2>$null
 
-# 用本地数据库启动验证
-docker run -d \
-  --name ctrip-review-monitor \
-  -p 3000:3000 \
-  -v "`pwd`/prisma/data:/app/prisma/data" \
-  --shm-size=2gb \
-  -e NODE_ENV=production \
-  -e DATABASE_URL=file:/app/prisma/data/reviews.db \
-  ctrip-review-monitor:latest
+# 启动验证
+docker run -d `
+  --name ctrip-review-monitor `
+  -p 3000:3000 `
+  -v "${PWD}/prisma/data:/app/prisma/data" `
+  --shm-size=2gb `
+  -e NODE_ENV=production `
+  -e DATABASE_URL=file:/app/prisma/data/reviews.db `
+  zhaoboya/ctrip-review-monitor:latest
 
-# 检查 Chrome 是否正常
+# 检查 Chrome
 docker exec ctrip-review-monitor google-chrome-stable --version
 
 # 检查 API
 curl http://localhost:3000/api/hotels
 ```
 
-#### 7.5 推送到 Docker Hub
+**第三步：打版本标签并推送**
 
-```bash
-# 登录（只需首次执行一次）
+```powershell
+# 登录 Docker Hub（只需首次执行一次）
 docker login
 
-# 打标签
-docker tag ctrip-review-monitor:latest zhaoboya/ctrip-review-monitor:latest
+# 设置版本号（每次发版修改此处）
+$VERSION="1.0.0"
 
-# 推送
+# 打版本标签 + latest 标签
+docker tag zhaoboya/ctrip-review-monitor:latest zhaoboya/ctrip-review-monitor:$VERSION
+docker tag zhaoboya/ctrip-review-monitor:latest zhaoboya/ctrip-review-monitor:latest
+
+# 推送版本标签
+docker push zhaoboya/ctrip-review-monitor:$VERSION
+
+# 推送 latest 标签
 docker push zhaoboya/ctrip-review-monitor:latest
 ```
+
+**一键完整流程（复制即用）：**
+
+```powershell
+# ====== 修改版本号 ======
+$VERSION="1.0.0"
+
+# ====== 构建 ======
+cd d:\Claude_Project\comment; docker build -t zhaoboya/ctrip-review-monitor:latest .
+
+# ====== 打标签 ======
+docker tag zhaoboya/ctrip-review-monitor:latest zhaoboya/ctrip-review-monitor:$VERSION
+
+# ====== 推送 ======
+docker push zhaoboya/ctrip-review-monitor:$VERSION; docker push zhaoboya/ctrip-review-monitor:latest
+
+# ====== 验证 ======
+Write-Output "已推送: zhaoboya/ctrip-review-monitor:$VERSION + latest"
+```
+
+**版本号规范：**
+
+| 规则 | 示例 | 说明 |
+|------|------|------|
+| 主版本.次版本.修订号 | `1.0.0` | 语义化版本（SemVer） |
+| 新功能发布 | `1.1.0` | 次版本号 +1 |
+| Bug 修复 | `1.0.1` | 修订号 +1 |
+| 重大变更 | `2.0.0` | 主版本号 +1 |
 
 #### 7.6 常见坑
 
