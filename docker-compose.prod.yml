@@ -8,6 +8,10 @@ version: '3.8'
 # 
 #  需要先登录 Docker Hub:
 #    docker login
+#
+#  注意：使用 host 网络模式，容器共享宿主机网络
+#  - 无需端口映射，服务直接监听宿主机 3000 端口
+#  - 容器内可直接访问宿主机 VPN 网络（ES、hotelList 等接口）
 # =============================================================================
 
 services:
@@ -15,8 +19,7 @@ services:
     image: zhaoboya/ctrip-review-monitor:latest
     container_name: ctrip-review-monitor
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    network_mode: "host"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/prisma/data/reviews.db

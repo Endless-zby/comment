@@ -12,6 +12,7 @@ import {
   Settings,
   Cloud,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/stats", label: "评价统计", icon: BarChart3 },
   { href: "/wordcloud", label: "评价词云", icon: Cloud },
   { href: "/ai-report", label: "AI 周报", icon: Sparkles },
+  { href: "/track-match", label: "评价溯源", icon: ShieldCheck },
   { href: "/settings", label: "系统设置", icon: Settings },
 ];
 

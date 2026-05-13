@@ -8,16 +8,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Cookie, Save, Loader2, CheckCircle, Key } from "lucide-react";
+import { Cookie, Save, Loader2, CheckCircle, Key, ShieldCheck } from "lucide-react";
 
 export default function SettingsPage() {
   const [fliggyCookie, setFliggyCookie] = useState("");
   const [deepseekApiKey, setDeepseekApiKey] = useState("");
+  const [esUrl, setEsUrl] = useState("");
+  const [esIndex, setEsIndex] = useState("");
+  const [remoteHotelApiUrl, setRemoteHotelApiUrl] = useState("");
+  const [trackMinSimilarity, setTrackMinSimilarity] = useState("70");
   const [loading, setLoading] = useState(false);
   const [savingCookie, setSavingCookie] = useState(false);
   const [savingApiKey, setSavingApiKey] = useState(false);
+  const [savingTrack, setSavingTrack] = useState(false);
   const [cookieSaved, setCookieSaved] = useState(false);
   const [apiKeySaved, setApiKeySaved] = useState(false);
+  const [trackSaved, setTrackSaved] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -31,6 +37,10 @@ export default function SettingsPage() {
         const data = await res.json();
         setFliggyCookie(data.fliggy_cookie || "");
         setDeepseekApiKey(data.deepseek_api_key || "");
+        setEsUrl(data.es_url || "");
+        setEsIndex(data.es_index || "");
+        setRemoteHotelApiUrl(data.remote_hotel_api_url || "");
+        setTrackMinSimilarity(data.track_min_similarity || "70");
       }
     } catch (err) {
       console.error("加载设置失败:", err);
@@ -92,6 +102,34 @@ export default function SettingsPage() {
       alert("网络错误");
     } finally {
       setSavingApiKey(false);
+    }
+  };
+
+  const handleSaveTrackConfig = async () => {
+    setSavingTrack(true);
+    setTrackSaved(false);
+    try {
+      const settings = [
+        { key: "es_url", value: esUrl, description: "Elasticsearch 地址" },
+        { key: "es_index", value: esIndex, description: "ES 索引名称" },
+        { key: "remote_hotel_api_url", value: remoteHotelApiUrl, description: "后台酒店列表接口 URL" },
+        { key: "track_min_similarity", value: trackMinSimilarity, description: "评价溯源最小相似度(%)" },
+      ];
+
+      for (const s of settings) {
+        await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(s),
+        });
+      }
+
+      setTrackSaved(true);
+      setTimeout(() => setTrackSaved(false), 2000);
+    } catch (err) {
+      alert("网络错误");
+    } finally {
+      setSavingTrack(false);
     }
   };
 
@@ -160,6 +198,99 @@ export default function SettingsPage() {
                 <span className="text-sm text-green-600 flex items-center gap-1">
                   <CheckCircle className="h-4 w-4" />
                   API Key 已配置
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-purple-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-purple-500" />
+              评价溯源配置
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-sm text-purple-800">
+              <p className="font-medium mb-2">配置说明：</p>
+              <ul className="list-disc list-inside space-y-1 text-purple-700">
+                <li>ES 地址和索引用于查询 H5 页面「复制评价内容」的埋点数据</li>
+                <li>后台酒店列表接口用于在添加酒店时搜索匹配</li>
+                <li>相似度阈值控制匹配的严格程度，默认 70%</li>
+              </ul>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-2">
+                <Label>ES 地址</Label>
+                <Input
+                  placeholder="http://10.31.177.15:9200"
+                  value={esUrl}
+                  onChange={(e) => setEsUrl(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>ES 索引名称</Label>
+                <Input
+                  placeholder="mobile_hotel_h5_log-*"
+                  value={esIndex}
+                  onChange={(e) => setEsIndex(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>后台酒店列表接口 URL</Label>
+              <Input
+                placeholder="https://api-jdagent.stqcloud.com/hotel/callback/ai/hotelList"
+                value={remoteHotelApiUrl}
+                onChange={(e) => setRemoteHotelApiUrl(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>最小匹配相似度 (%)</Label>
+              <Input
+                type="number"
+                min={30}
+                max={100}
+                placeholder="70"
+                value={trackMinSimilarity}
+                onChange={(e) => setTrackMinSimilarity(e.target.value)}
+                disabled={loading}
+              />
+              <p className="text-xs text-muted-foreground">
+                低于此阈值的匹配将被视为未匹配，建议 60-80 之间
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleSaveTrackConfig}
+                disabled={savingTrack || loading}
+                className="bg-purple-500 hover:bg-purple-600"
+              >
+                {savingTrack ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    保存中...
+                  </>
+                ) : trackSaved ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    已保存
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    保存溯源配置
+                  </>
+                )}
+              </Button>
+              {esUrl && (
+                <span className="text-sm text-green-600 flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4" />
+                  溯源配置已填写
                 </span>
               )}
             </div>

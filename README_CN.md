@@ -49,6 +49,8 @@
 | 📊 **数据可视化** | 周评论趋势、评分走势、情感时间线、评分分布、平台对比、热力图、词云等 |
 | 🗓️ **入驻日期标记** | 为每家酒店设置入驻日期，时间轴图表中标注垂直参考线，清晰对比入驻前后变化 |
 | 🤖 **AI 评价周报** | 接入 DeepSeek 大模型，自动生成酒店周评价摘要报告，报告自动保存、支持历史查看 |
+| 🛡️ **评价溯源** | 匹配 H5 埋点「复制评价内容」事件与平台评价，基于 LCS 相似度算法识别从 AI 工具复制的评价内容 |
+| 🔗 **后台酒店绑定** | 通过 platformId 关联后台酒店系统，添加酒店时可搜索远程酒店列表并自动填充 |
 | 🔍 **多维筛选** | 按酒店、平台、评分、关键词灵活筛选评价数据 |
 | 📥 **Excel 导出** | 一键导出当前筛选结果为 Excel 文件，包含完整评价信息及图片 |
 
@@ -61,6 +63,7 @@
 | 📡 **CDP 拦截** | 通过 Chrome DevTools Protocol 直接捕获 API 响应，高效获取飞猪评价数据 |
 | 🧩 **增量拉取** | 智能判断首拉 / 增量拉取，基于进度记录精准断点续拉 |
 | 🎨 **响应式 UI** | 基于 shadcn/ui + Tailwind CSS 的现代化界面，支持深色/浅色模式 |
+| 📡 **ES 埋点查询** | 对接 Elasticsearch，实时查询 H5 页面「复制评价内容」埋点事件 |
 
 ---
 
@@ -99,7 +102,7 @@
 # Linux / macOS
 docker run -d \
   --name ctrip-review \
-  -p 3000:3000 \
+  --network host \
   -v review_data:/app/prisma/data \
   --shm-size=2gb \
   --restart unless-stopped \
@@ -112,7 +115,7 @@ docker run -d \
 # Windows PowerShell
 docker run -d `
   --name ctrip-review `
-  -p 3000:3000 `
+  --network host `
   -v review_data:/app/prisma/data `
   --shm-size=2gb `
   --restart unless-stopped `
@@ -169,22 +172,22 @@ services:
     image: zhaoboya/ctrip-review-monitor:latest
     container_name: ctrip-review-monitor
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    network_mode: "host"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/prisma/data/reviews.db
     volumes:
       - review_data:/app/prisma/data
     shm_size: '2gb'
-
-volumes:
-  review_data:
 ```
+
+启动：
 
 ```bash
 docker compose up -d
 ```
+
+> 使用 `network_mode: "host"` 使容器共享宿主机网络，无需端口映射。服务直接监听宿主机 3000 端口，同时容器内可直接访问宿主机 VPN 网络（如 ES、hotelList 等内部接口）。
 
 ### 场景二：挂载已有数据库文件
 
@@ -197,7 +200,7 @@ docker compose up -d
 # 假设数据目录在 ~/comment/prisma/data/
 docker run -d \
   --name ctrip-review \
-  -p 3000:3000 \
+  --network host \
   -v ~/comment/prisma/data:/app/prisma/data \
   --shm-size=2gb \
   --restart unless-stopped \
@@ -211,7 +214,7 @@ docker run -d \
 # 假设数据目录在 D:\comment\prisma\data\
 docker run -d `
   --name ctrip-review `
-  -p 3000:3000 `
+  --network host `
   -v "D:\comment\prisma\data:/app/prisma/data" `
   --shm-size=2gb `
   --restart unless-stopped `
@@ -272,7 +275,9 @@ comment/
 │   │   │   ├── fetch/        # 触发数据拉取
 │   │   │   ├── dashboard/    # 仪表盘统计
 │   │   │   ├── settings/     # 全局设置（API Key 等）
-│   │   │   └── ai/           # AI 周报生成
+│   │   │   ├── ai/           # AI 周报生成
+│   │   │   ├── remote/       # 远程酒店列表代理
+│   │   │   └── track/        # 评价溯源（埋点查询 & 匹配）
 │   │   ├── dashboard/        # 仪表盘页面
 │   │   ├── hotels/           # 酒店管理页面
 │   │   ├── reviews/          # 评价列表页面
@@ -280,7 +285,8 @@ comment/
 │   │   ├── stats/            # 统计分析页面
 │   │   ├── settings/         # 系统设置页面
 │   │   ├── wordcloud/        # 词云页面
-│   │   └── ai-report/        # AI 周报页面
+│   │   ├── ai-report/        # AI 周报页面
+│   │   └── track-match/      # 评价溯源页面
 │   ├── components/           # 通用组件
 │   │   ├── layout/           # 布局组件（侧边栏、顶部栏）
 │   │   └── ui/               # shadcn/ui 基础组件
@@ -291,6 +297,7 @@ comment/
 │   └── services/             # 服务层
 │       ├── crawler/          # 爬虫引擎（Puppeteer / CDP）
 │       ├── scheduler/        # 定时任务调度
+│       ├── track-match/      # 评价溯源服务（ES 查询 & LCS 匹配）
 │       └── logger/           # 日志服务
 ├── Dockerfile                # 多阶段 Docker 构建
 ├── docker-compose.yml        # 开发/生产 Compose 配置
@@ -314,7 +321,8 @@ comment/
 | 统计分析 | `/stats` | 周趋势柱状图、评分折线图、情感时间线、热力图等 |
 | 词云分析 | `/wordcloud` | 评价关键词词云、Top N 标签统计 |
 | AI 周报 | `/ai-report` | 选择酒店生成 AI 评价周报，查看历史报告 |
-| 系统设置 | `/settings` | 配置 DeepSeek API Key、携程/飞猪 Cookie |
+| 评价溯源 | `/track-match` | 查询 H5 埋点复制事件，匹配平台评价，识别 AI 生成评价 |
+| 系统设置 | `/settings` | 配置 DeepSeek API Key、携程/飞猪 Cookie、评价溯源参数 |
 
 ---
 
@@ -326,6 +334,7 @@ comment/
 | `hotelName` | String | 酒店名称 |
 | `ctripHotelId` | String? | 携程酒店 ID（唯一） |
 | `fliggyHotelId` | String? | 飞猪酒店 ID（唯一） |
+| `platformId` | String? | 后台酒店 ID（唯一），用于关联后台系统与评价溯源 |
 | `city` | String? | 所在城市 |
 | `onboardDate` | String? | 入驻日期（YYYY-MM-DD），图表中作为时间节点标记 |
 | `isActive` | Boolean | 启用状态，停用后不再拉取 |
@@ -360,7 +369,7 @@ comment/
 | `NODE_ENV` | - | `development` | 运行环境，Docker 中设为 `production` |
 | `PORT` | - | `3000` | HTTP 服务端口 |
 
-API Key 与 Cookie 等敏感信息通过 Web 管理页面（系统设置）配置，存储在数据库中，无需写入环境变量。
+API Key、Cookie 及评价溯源配置（ES 地址、索引名、后台酒店接口 URL、相似度阈值）等敏感信息通过 Web 管理页面（系统设置）配置，存储在数据库中，无需写入环境变量。
 
 ---
 

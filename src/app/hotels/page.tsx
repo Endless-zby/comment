@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AppLayout } from "@/components/layout/app-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,17 +13,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, ExternalLink, Trash2, Power, RefreshCw, Edit, CalendarDays } from "lucide-react";
+import { Plus, ExternalLink, Trash2, Power, RefreshCw, Edit, CalendarDays, Link2, Search, Loader2 } from "lucide-react";
 
 interface HotelItem {
   id: number;
   hotelName: string;
   ctripHotelId: string | null;
   fliggyHotelId: string | null;
+  platformId: string | null;
   onboardDate: string | null;
   avgScore: number | null;
   isActive: boolean;
   _count?: { reviews: number };
+}
+
+interface RemoteHotelItem {
+  platformId: string;
+  hotelName: string;
 }
 
 export default function HotelsPage() {
@@ -36,13 +42,100 @@ export default function HotelsPage() {
   const [fliggyUrl, setFliggyUrl] = useState("");
   const [ctripHotelId, setCtripHotelId] = useState("");
   const [fliggyHotelId, setFliggyHotelId] = useState("");
+  const [platformId, setPlatformId] = useState("");
   const [hotelName, setHotelName] = useState("");
   const [onboardDate, setOnboardDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [error, setError] = useState("");
 
+  const [remoteResults, setRemoteResults] = useState<RemoteHotelItem[]>([]);
+  const [remoteSearching, setRemoteSearching] = useState(false);
+  const [showRemoteDropdown, setShowRemoteDropdown] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [editRemoteResults, setEditRemoteResults] = useState<RemoteHotelItem[]>([]);
+  const [editRemoteSearching, setEditRemoteSearching] = useState(false);
+  const [editShowRemoteDropdown, setEditShowRemoteDropdown] = useState(false);
+  const editSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const editDropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     loadHotels();
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowRemoteDropdown(false);
+      }
+      if (editDropdownRef.current && !editDropdownRef.current.contains(e.target as Node)) {
+        setEditShowRemoteDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const searchRemoteHotels = useCallback(async (keyword: string, isEdit: boolean) => {
+    if (!keyword || keyword.length < 1) {
+      if (isEdit) {
+        setEditRemoteResults([]);
+        setEditShowRemoteDropdown(false);
+      } else {
+        setRemoteResults([]);
+        setShowRemoteDropdown(false);
+      }
+      return;
+    }
+
+    if (isEdit) setEditRemoteSearching(true);
+    else setRemoteSearching(true);
+
+    try {
+      const res = await fetch(`/api/remote/hotels?keyword=${encodeURIComponent(keyword)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          if (isEdit) {
+            setEditRemoteResults(data.data || []);
+            setEditShowRemoteDropdown(true);
+          } else {
+            setRemoteResults(data.data || []);
+            setShowRemoteDropdown(true);
+          }
+        }
+      }
+    } catch {
+    } finally {
+      if (isEdit) setEditRemoteSearching(false);
+      else setRemoteSearching(false);
+    }
+  }, []);
+
+  const handleAddNameChange = (value: string) => {
+    setHotelName(value);
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => searchRemoteHotels(value, false), 300);
+  };
+
+  const handleEditNameChange = (value: string) => {
+    if (!editingHotel) return;
+    setEditingHotel({ ...editingHotel, hotelName: value });
+    if (editSearchTimeoutRef.current) clearTimeout(editSearchTimeoutRef.current);
+    editSearchTimeoutRef.current = setTimeout(() => searchRemoteHotels(value, true), 300);
+  };
+
+  const selectRemoteHotel = (item: RemoteHotelItem) => {
+    setHotelName(item.hotelName);
+    setPlatformId(item.platformId);
+    setShowRemoteDropdown(false);
+  };
+
+  const selectEditRemoteHotel = (item: RemoteHotelItem) => {
+    if (!editingHotel) return;
+    setEditingHotel({ ...editingHotel, hotelName: item.hotelName, platformId: item.platformId });
+    setEditShowRemoteDropdown(false);
+  };
 
   const loadHotels = async () => {
     setLoading(true);
@@ -95,6 +188,7 @@ export default function HotelsPage() {
           hotelName,
           ctripHotelId: ctripHotelId || null,
           fliggyHotelId: fliggyHotelId || null,
+          platformId: platformId || null,
           city: null,
           onboardDate: onboardDate || null,
         }),
@@ -132,6 +226,7 @@ export default function HotelsPage() {
           hotelName: editingHotel.hotelName,
           ctripHotelId: editingHotel.ctripHotelId || null,
           fliggyHotelId: editingHotel.fliggyHotelId || null,
+          platformId: editingHotel.platformId || null,
           onboardDate: editingHotel.onboardDate || null,
         }),
       });
@@ -155,14 +250,20 @@ export default function HotelsPage() {
     setFliggyUrl("");
     setCtripHotelId("");
     setFliggyHotelId("");
+    setPlatformId("");
     setHotelName("");
     setOnboardDate(new Date().toISOString().split("T")[0]);
     setError("");
+    setRemoteResults([]);
+    setShowRemoteDropdown(false);
   };
 
   const openEditDialog = (hotel: HotelItem) => {
     setEditingHotel({ ...hotel });
     setIsEditDialogOpen(true);
+    setEditRemoteResults([]);
+    setEditShowRemoteDropdown(false);
+    setError("");
   };
 
   const handleDeleteHotel = async (id: number) => {
@@ -226,7 +327,7 @@ export default function HotelsPage() {
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               刷新
             </Button>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <Dialog open={isAddDialogOpen} onOpenChange={(open) => { setIsAddDialogOpen(open); if (!open) resetForm(); }}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4" />
@@ -238,15 +339,61 @@ export default function HotelsPage() {
                   <DialogTitle>添加酒店</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
+                  <div className="grid gap-2 relative" ref={dropdownRef}>
                     <Label htmlFor="hotelName">酒店名称 *</Label>
-                    <Input
-                      id="hotelName"
-                      placeholder="上海世博木棉花凯悦臻选酒店"
-                      value={hotelName}
-                      onChange={(e) => setHotelName(e.target.value)}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="hotelName"
+                        placeholder="输入名称搜索后台酒店库..."
+                        value={hotelName}
+                        onChange={(e) => handleAddNameChange(e.target.value)}
+                        onFocus={() => { if (remoteResults.length > 0) setShowRemoteDropdown(true); }}
+                      />
+                      {remoteSearching && (
+                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                      )}
+                      {!remoteSearching && !showRemoteDropdown && (
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      输入名称可从后台酒店库中搜索匹配，选择后自动绑定后台酒店ID
+                    </p>
+                    {showRemoteDropdown && remoteResults.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-48 overflow-auto rounded-md border bg-popover shadow-md">
+                        {remoteResults.map((item) => (
+                          <button
+                            key={item.platformId}
+                            className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent cursor-pointer text-left"
+                            onClick={() => selectRemoteHotel(item)}
+                          >
+                            <span>{item.hotelName}</span>
+                            <span className="text-xs text-muted-foreground ml-2 shrink-0">ID: {item.platformId}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
+
+                  <div className="grid gap-2">
+                    <Label>后台酒店 ID（platformId）</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="从上方搜索选择自动填充，或手动输入"
+                        value={platformId}
+                        onChange={(e) => setPlatformId(e.target.value)}
+                      />
+                      {platformId && (
+                        <Button variant="ghost" size="sm" className="text-muted-foreground shrink-0" onClick={() => setPlatformId("")}>
+                          清除
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      绑定后台酒店后，可在「评价溯源」功能中匹配埋点数据
+                    </p>
+                  </div>
+
                   <div className="grid gap-2">
                     <Label htmlFor="onboardDate">入驻日期（可选）</Label>
                     <Input
@@ -323,20 +470,58 @@ export default function HotelsPage() {
               <DialogTitle>编辑酒店</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
+              <div className="grid gap-2 relative" ref={editDropdownRef}>
                 <Label htmlFor="editHotelName">酒店名称 *</Label>
-                <Input
-                  id="editHotelName"
-                  placeholder="酒店名称"
-                  value={editingHotel?.hotelName || ""}
-                  onChange={(e) =>
-                    setEditingHotel({
-                      ...editingHotel!,
-                      hotelName: e.target.value,
-                    })
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    id="editHotelName"
+                    placeholder="输入名称搜索后台酒店库..."
+                    value={editingHotel?.hotelName || ""}
+                    onChange={(e) => handleEditNameChange(e.target.value)}
+                    onFocus={() => { if (editRemoteResults.length > 0) setEditShowRemoteDropdown(true); }}
+                  />
+                  {editRemoteSearching && (
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                  )}
+                </div>
+                {editShowRemoteDropdown && editRemoteResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-48 overflow-auto rounded-md border bg-popover shadow-md">
+                    {editRemoteResults.map((item) => (
+                      <button
+                        key={item.platformId}
+                        className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-accent cursor-pointer text-left"
+                        onClick={() => selectEditRemoteHotel(item)}
+                      >
+                        <span>{item.hotelName}</span>
+                        <span className="text-xs text-muted-foreground ml-2 shrink-0">ID: {item.platformId}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
+
+              <div className="grid gap-2">
+                <Label>后台酒店 ID（platformId）</Label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="从上方搜索选择自动填充，或手动输入"
+                    value={editingHotel?.platformId || ""}
+                    onChange={(e) =>
+                      setEditingHotel({
+                        ...editingHotel!,
+                        platformId: e.target.value,
+                      })
+                    }
+                  />
+                  {editingHotel?.platformId && (
+                    <Button variant="ghost" size="sm" className="text-muted-foreground shrink-0"
+                      onClick={() => setEditingHotel({ ...editingHotel!, platformId: "" })}>
+                      清除
+                    </Button>
+                  )}
+                </div>
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="editOnboardDate">入驻日期（可选）</Label>
                 <Input
@@ -423,6 +608,7 @@ export default function HotelsPage() {
                             `飞猪ID: ${hotel.fliggyHotelId}`}
                           {!hotel.ctripHotelId &&
                             !hotel.fliggyHotelId &&
+                            !hotel.platformId &&
                             "未配置平台ID"}
                         </p>
                         <p>
@@ -437,6 +623,12 @@ export default function HotelsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      {hotel.platformId && (
+                        <span className="flex items-center gap-1 text-xs text-purple-600 bg-purple-50 rounded-full px-2 py-1">
+                          <Link2 className="h-3 w-3" />
+                          后台: {hotel.platformId}
+                        </span>
+                      )}
                       {hotel.onboardDate && (
                         <span className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 rounded-full px-2 py-1">
                           <CalendarDays className="h-3 w-3" />

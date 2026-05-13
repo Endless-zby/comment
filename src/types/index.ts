@@ -3,6 +3,7 @@ export interface Hotel {
   hotelName: string;
   ctripHotelId: string | null;
   fliggyHotelId: string | null;
+  platformId: string | null;
   city: string | null;
   onboardDate: string | null;
   totalReviews: number;
@@ -188,4 +189,56 @@ export interface WeeklySummaryResponse {
   weekRange: string;
   hotelName: string;
   generatedAt: string;
+}
+
+export interface RemoteHotel {
+  platformId: string;
+  hotelName: string;
+}
+
+export interface TrackCopyEvent {
+  platformId: string;
+  hotelName: string;
+  content: string;
+  timestamp: string;
+}
+
+export interface TrackMatchResult {
+  trackEvent: TrackCopyEvent;
+  matchedReview: {
+    id: number;
+    content: string;
+    rating: number;
+    platform: string;
+    reviewDate: string | null;
+    hotelName: string;
+  } | null;
+  similarity: number;
+  hotelId: number | null;
+  hotelName: string | null;
+}
+
+export interface TrackMatchRequest {
+  hotelId?: number;
+  platformId?: string;
+  minSimilarity?: number;
+  pageSize?: number;
+  page?: number;
+}
+
+export interface TrackMatchStats {
+  totalTrackEvents: number;
+  matchedCount: number;
+  unmatchedCount: number;
+  matchRate: number;
+  byHotel: { hotelName: string; platformId: string; total: number; matched: number }[];
+}
+
+export interface TrackMatchResponse {
+  success: boolean;
+  stats: TrackMatchStats;
+  results: TrackMatchResult[];
+  total: number;
+  page: number;
+  pageSize: number;
 }

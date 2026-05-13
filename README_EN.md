@@ -48,6 +48,8 @@ Automated hotel review collection from Ctrip & Fliggy OTA platforms, with **mult
 | 📊 **Rich Visualizations** | Weekly trends, rating curves, sentiment timelines, distributions, comparisons, heatmaps, word clouds |
 | 🗓️ **Onboard Date Markers** | Set onboard date per hotel, displayed as vertical reference lines on time-series charts for before/after comparison |
 | 🤖 **AI Weekly Reports** | DeepSeek-powered auto-generated weekly review summaries, saved for historical browsing |
+| 🛡️ **Review Source Tracing** | Match H5 "copy review content" events with platform reviews via LCS similarity to detect AI-generated review copying |
+| 🔗 **Backend Hotel Binding** | Link hotels to backend system via platformId, with remote hotel search & auto-fill |
 | 🔍 **Multi-Dim Filtering** | Filter reviews by hotel, platform, rating, and keyword |
 | 📥 **Excel Export** | One-click export filtered results as Excel, including images |
 
@@ -60,6 +62,7 @@ Automated hotel review collection from Ctrip & Fliggy OTA platforms, with **mult
 | 📡 **CDP Interception** | Direct API response capture via Chrome DevTools Protocol for efficient Fliggy data collection |
 | 🧩 **Incremental Fetching** | Smart first-run vs. incremental detection with progress-based resume |
 | 🎨 **Responsive UI** | Modern shadcn/ui + Tailwind CSS interface with light/dark mode support |
+| 📡 **ES Event Querying** | Integrates with Elasticsearch to query H5 "copy review content" tracking events in real-time |
 
 ---
 
@@ -98,7 +101,7 @@ The image is publicly available on Docker Hub — **pull and run, no dependencie
 # Linux / macOS
 docker run -d \
   --name ctrip-review \
-  -p 3000:3000 \
+  --network host \
   -v review_data:/app/prisma/data \
   --shm-size=2gb \
   --restart unless-stopped \
@@ -111,7 +114,7 @@ docker run -d \
 # Windows PowerShell
 docker run -d `
   --name ctrip-review `
-  -p 3000:3000 `
+  --network host `
   -v review_data:/app/prisma/data `
   --shm-size=2gb `
   --restart unless-stopped `
@@ -168,22 +171,22 @@ services:
     image: zhaoboya/ctrip-review-monitor:latest
     container_name: ctrip-review-monitor
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    network_mode: "host"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/prisma/data/reviews.db
     volumes:
       - review_data:/app/prisma/data
     shm_size: '2gb'
-
-volumes:
-  review_data:
 ```
+
+Start:
 
 ```bash
 docker compose up -d
 ```
+
+> Using `network_mode: "host"` shares the host network with the container — no port mapping needed. The service listens on host port 3000 directly, and the container can access host VPN networks (e.g., ES, hotelList APIs).
 
 ### Scenario B: Mount Existing Database
 
@@ -196,7 +199,7 @@ For migrating from source development to Docker, or preserving existing hotels a
 # Assuming data at ~/comment/prisma/data/
 docker run -d \
   --name ctrip-review \
-  -p 3000:3000 \
+  --network host \
   -v ~/comment/prisma/data:/app/prisma/data \
   --shm-size=2gb \
   --restart unless-stopped \
@@ -210,7 +213,7 @@ docker run -d \
 # Assuming data at D:\comment\prisma\data\
 docker run -d `
   --name ctrip-review `
-  -p 3000:3000 `
+  --network host `
   -v "D:\comment\prisma\data:/app/prisma/data" `
   --shm-size=2gb `
   --restart unless-stopped `
@@ -271,7 +274,9 @@ comment/
 │   │   │   ├── fetch/        # Trigger data fetch
 │   │   │   ├── dashboard/    # Dashboard statistics
 │   │   │   ├── settings/     # Global settings (API keys, etc.)
-│   │   │   └── ai/           # AI weekly report generation
+│   │   │   ├── ai/           # AI weekly report generation
+│   │   │   ├── remote/       # Remote hotel list proxy
+│   │   │   └── track/        # Review source tracing (event query & matching)
 │   │   ├── dashboard/        # Dashboard page
 │   │   ├── hotels/           # Hotel management page
 │   │   ├── reviews/          # Review list page
@@ -279,7 +284,8 @@ comment/
 │   │   ├── stats/            # Statistics page
 │   │   ├── settings/         # Settings page
 │   │   ├── wordcloud/        # Word cloud page
-│   │   └── ai-report/        # AI weekly report page
+│   │   ├── ai-report/        # AI weekly report page
+│   │   └── track-match/      # Review source tracing page
 │   ├── components/           # Shared components
 │   │   ├── layout/           # Layout (sidebar, navbar)
 │   │   └── ui/               # shadcn/ui base components
@@ -290,6 +296,7 @@ comment/
 │   └── services/             # Service layer
 │       ├── crawler/          # Crawler engine (Puppeteer / CDP)
 │       ├── scheduler/        # Scheduled task management
+│       ├── track-match/      # Review source tracing service (ES query & LCS matching)
 │       └── logger/           # Logging service
 ├── Dockerfile                # Multi-stage Docker build
 ├── docker-compose.yml        # Dev/prod Compose config
@@ -313,7 +320,8 @@ comment/
 | Stats | `/stats` | Weekly bar charts, rating line charts, sentiment area charts, heatmaps |
 | Word Cloud | `/wordcloud` | Keyword word cloud, top-N tag statistics |
 | AI Report | `/ai-report` | Generate AI weekly reports per hotel, view history |
-| Settings | `/settings` | Configure DeepSeek API Key, Ctrip/Fliggy cookies |
+| Source Tracing | `/track-match` | Query H5 copy events, match with platform reviews, detect AI-generated reviews |
+| Settings | `/settings` | Configure DeepSeek API Key, Ctrip/Fliggy cookies, source tracing parameters |
 
 ---
 
@@ -325,6 +333,7 @@ comment/
 | `hotelName` | String | Hotel name |
 | `ctripHotelId` | String? | Ctrip hotel ID (unique) |
 | `fliggyHotelId` | String? | Fliggy hotel ID (unique) |
+| `platformId` | String? | Backend hotel ID (unique), used for backend system binding and review source tracing |
 | `city` | String? | City |
 | `onboardDate` | String? | Onboard date (YYYY-MM-DD), displayed as timeline marker |
 | `isActive` | Boolean | Active status — disabled hotels will not be fetched |
@@ -359,7 +368,7 @@ comment/
 | `NODE_ENV` | — | `development` | Runtime environment; use `production` in Docker |
 | `PORT` | — | `3000` | HTTP server port |
 
-API keys and cookies are configured via the Settings web page and stored in the database — no environment variables needed for secrets.
+API keys, cookies, and source tracing configuration (ES URL, index name, remote hotel API URL, similarity threshold) are configured via the Settings web page and stored in the database — no environment variables needed for secrets.
 
 ---
 

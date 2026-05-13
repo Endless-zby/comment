@@ -57,6 +57,9 @@ export async function PUT(
     if (body.onboardDate !== undefined) {
       updateData.onboardDate = body.onboardDate || null;
     }
+    if (body.platformId !== undefined) {
+      updateData.platformId = body.platformId || null;
+    }
     
     const hotel = await prisma.hotel.update({
       where: { id: parseInt(id) },
@@ -72,6 +75,9 @@ export async function PUT(
       }
       if (target.includes("fliggy_hotel_id")) {
         return NextResponse.json({ error: "飞猪酒店ID已存在" }, { status: 400 });
+      }
+      if (target.includes("platform_id")) {
+        return NextResponse.json({ error: "后台酒店ID已存在，该酒店已被其他记录绑定" }, { status: 400 });
       }
       return NextResponse.json({ error: "唯一字段冲突" }, { status: 400 });
     }

@@ -30,7 +30,7 @@
 ```bash
 docker run -d \
   --name ctrip-review \
-  -p 3000:3000 \
+  --network host \
   -v review_data:/app/prisma/data \
   --shm-size=2gb \
   --restart unless-stopped \
@@ -48,6 +48,8 @@ Then open **http://localhost:3000**
 - 📊 **Rich Charts** — Trends, sentiment timelines, heatmaps, word clouds
 - 🗓️ **Onboard Date Markers** — Before/after comparison on time-series charts
 - 🤖 **AI Weekly Reports** — Auto-generated summaries via DeepSeek
+- 🛡️ **Review Source Tracing** — Match H5 copy events with platform reviews via LCS similarity to detect AI-generated review copying
+- 🔗 **Backend Hotel Binding** — Link hotels to backend system via platformId, with remote hotel search & auto-fill
 - 🐳 **One-Click Docker** — Pull and run, Chrome included
 - 📦 **SQLite + Prisma** — Zero external database dependencies
 

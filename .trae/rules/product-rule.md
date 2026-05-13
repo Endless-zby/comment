@@ -4,6 +4,53 @@ description: 项目功能开发需要遵守的开发规则
 ---
 # 携程酒店评价监控系统 - 技术方案
 
+## 开发环境
+
+| 项目 | 值 |
+|------|-----|
+| 操作系统 | Windows |
+| Shell | PowerShell（Trae IDE 内置终端） |
+| 包管理器 | pnpm |
+| Node.js | >= 18.0 |
+| 项目根目录 | `d:\Claude_Project\comment` |
+
+### PowerShell 注意事项
+
+> **关键**：Trae IDE 内置终端为 PowerShell，**不支持 `&&` 作为命令分隔符**。
+
+| 写法 | 是否支持 | 替代方案 |
+|------|----------|----------|
+| `cd dir && git status` | ❌ 报错 | `cd dir; git status` |
+| `pnpm build && pnpm start` | ❌ 报错 | `pnpm build; pnpm start` |
+| `cd dir; git status` | ✅ | — |
+| `npx prisma db push; npx prisma generate` | ✅ | — |
+
+**规则**：在 RunCommand 工具中执行多条命令时，**必须使用分号 `;` 而非 `&&`** 连接命令。
+
+### 常用开发命令
+
+```powershell
+# 安装依赖
+pnpm install
+
+# 数据库初始化
+npx prisma db push; npx prisma generate
+
+# 启动开发服务器
+pnpm dev
+
+# 构建生产版本
+pnpm build
+
+# Docker 构建
+docker build -t ctrip-review-monitor:latest .
+
+# Git 操作
+git status; git diff; git add .; git commit -m "message"
+```
+
+---
+
 ## 项目开发规则
 
 本章节定义项目后续迭代开发必须遵循的规范，确保代码一致性、可维护性和可扩展性。

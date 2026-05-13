@@ -13,6 +13,7 @@ model Hotel {
   hotelName      String    @map("hotel_name")
   ctripHotelId   String?   @unique @map("ctrip_hotel_id")
   fliggyHotelId  String?   @unique @map("fliggy_hotel_id")
+  platformId     String?   @unique @map("platform_id")
   city           String?
   onboardDate    String?   @map("onboard_date")
   totalReviews   Int       @default(0) @map("total_reviews")
@@ -27,6 +28,7 @@ model Hotel {
 
   @@index([ctripHotelId])
   @@index([fliggyHotelId])
+  @@index([platformId])
   @@map("hotels")
 }
 

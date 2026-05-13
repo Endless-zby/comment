@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
         hotelName: body.hotelName,
         ctripHotelId: body.ctripHotelId || null,
         fliggyHotelId: body.fliggyHotelId || null,
+        platformId: body.platformId || null,
         city: body.city || null,
         onboardDate: body.onboardDate || new Date().toISOString().split("T")[0],
       },
@@ -52,6 +53,12 @@ export async function POST(request: NextRequest) {
       if (target.includes("fliggy_hotel_id")) {
         return NextResponse.json(
           { error: "飞猪酒店ID已存在" },
+          { status: 400 }
+        );
+      }
+      if (target.includes("platform_id")) {
+        return NextResponse.json(
+          { error: "后台酒店ID已存在，该酒店已被其他记录绑定" },
           { status: 400 }
         );
       }
