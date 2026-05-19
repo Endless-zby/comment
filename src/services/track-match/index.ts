@@ -150,7 +150,7 @@ export async function queryRawTrackEvents(platformId?: string): Promise<TrackEve
       existing.count++;
     } else {
       byHotelMap.set(key, {
-        hotelName: e.boundHotelName || "未绑定酒店",
+        hotelName: e.boundHotelName || e.hotelName || "未绑定酒店",
         platformId: e.platformId || "",
         count: 1,
         bound: e.boundHotelId !== null,

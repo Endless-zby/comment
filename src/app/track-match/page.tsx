@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/app-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Search, CheckCircle, XCircle, ChevronLeft, ChevronRight, Loader2, ShieldCheck, Database, Clock, Building2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Search, CheckCircle, XCircle, ChevronLeft, ChevronRight, Loader2, ShieldCheck, Database, Clock, Building2, Link2, Plus } from "lucide-react";
 import type { TrackMatchResult, TrackMatchStats, TrackMatchResponse, TrackCopyEvent } from "@/types";
 
 interface HotelOption {
@@ -47,7 +54,64 @@ export default function TrackMatchPage() {
   const [pageSize, setPageSize] = useState(50);
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
+  const [isBindDialogOpen, setIsBindDialogOpen] = useState(false);
+  const [bindHotelName, setBindHotelName] = useState("");
+  const [bindPlatformId, setBindPlatformId] = useState("");
+  const [bindCtripHotelId, setBindCtripHotelId] = useState("");
+  const [bindFliggyHotelId, setBindFliggyHotelId] = useState("");
+  const [bindOnboardDate, setBindOnboardDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [bindError, setBindError] = useState("");
+  const [bindSubmitting, setBindSubmitting] = useState(false);
+
   const eventsPageSize = 20;
+
+  const handleOpenBindDialog = (hotelName: string, platformId: string) => {
+    setBindHotelName(hotelName);
+    setBindPlatformId(platformId);
+    setBindCtripHotelId("");
+    setBindFliggyHotelId("");
+    setBindOnboardDate(new Date().toISOString().split("T")[0]);
+    setBindError("");
+    setBindSubmitting(false);
+    setIsBindDialogOpen(true);
+  };
+
+  const handleBindSubmit = async () => {
+    setBindError("");
+    if (!bindHotelName) {
+      setBindError("请填写酒店名称");
+      return;
+    }
+    setBindSubmitting(true);
+    try {
+      const res = await fetch("/api/hotels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hotelName: bindHotelName,
+          ctripHotelId: bindCtripHotelId || null,
+          fliggyHotelId: bindFliggyHotelId || null,
+          platformId: bindPlatformId || null,
+          city: null,
+          onboardDate: bindOnboardDate || null,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsBindDialogOpen(false);
+        loadHotels();
+        if (eventsData) {
+          handleQueryEvents();
+        }
+      } else {
+        setBindError(data.error || "添加失败");
+      }
+    } catch {
+      setBindError("网络错误，请重试");
+    } finally {
+      setBindSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     loadHotels();
@@ -296,9 +360,22 @@ export default function TrackMatchPage() {
                             </span>
                           )}
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          复制事件: <strong>{item.count}</strong> 次
-                        </span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm text-muted-foreground">
+                            复制事件: <strong>{item.count}</strong> 次
+                          </span>
+                          {!item.bound && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                              onClick={() => handleOpenBindDialog(item.hotelName, item.platformId)}
+                            >
+                              <Link2 className="h-3 w-3 mr-1" />
+                              去绑定
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -343,7 +420,7 @@ export default function TrackMatchPage() {
                             onClick={() => setEventsExpandedIdx(isExpanded ? null : globalIdx)}
                           >
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="font-medium text-sm">{event.boundHotelName || "未绑定酒店"}</span>
+                              <span className="font-medium text-sm">{event.boundHotelName || event.hotelName || "未绑定酒店"}</span>
                               {event.platformId && (
                                 <span className="text-xs text-purple-600 bg-purple-50 rounded-full px-2 py-0.5">
                                   {event.platformId}
@@ -664,6 +741,78 @@ export default function TrackMatchPage() {
           </>
         )}
       </div>
+
+      <Dialog open={isBindDialogOpen} onOpenChange={(open) => { setIsBindDialogOpen(open); if (!open) setBindError(""); }}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              添加酒店并绑定
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="bindHotelName">酒店名称 *</Label>
+              <Input
+                id="bindHotelName"
+                value={bindHotelName}
+                onChange={(e) => setBindHotelName(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>后台酒店 ID（platformId）</Label>
+              <Input
+                value={bindPlatformId}
+                onChange={(e) => setBindPlatformId(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                已自动填充埋点数据中的 platformId，绑定后即可在评价溯源中匹配
+              </p>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="bindOnboardDate">入驻日期（可选）</Label>
+              <Input
+                id="bindOnboardDate"
+                type="date"
+                value={bindOnboardDate}
+                onChange={(e) => setBindOnboardDate(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="bindCtripHotelId">携程酒店 ID（可选）</Label>
+              <Input
+                id="bindCtripHotelId"
+                placeholder="如 128045084"
+                value={bindCtripHotelId}
+                onChange={(e) => setBindCtripHotelId(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="bindFliggyHotelId">飞猪酒店 ID（可选）</Label>
+              <Input
+                id="bindFliggyHotelId"
+                placeholder="如 77034255"
+                value={bindFliggyHotelId}
+                onChange={(e) => setBindFliggyHotelId(e.target.value)}
+              />
+            </div>
+            {bindError && <p className="text-sm text-red-500">{bindError}</p>}
+            <Button onClick={handleBindSubmit} disabled={bindSubmitting}>
+              {bindSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  提交中...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  确认添加
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 }
