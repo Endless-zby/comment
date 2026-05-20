@@ -590,3 +590,153 @@ Write-Output "已推送: zhaoboya/ctrip-review-monitor:$VERSION + latest"
 | Debian 官方源 502 | 大陆网络访问 deb.debian.org 不稳定 | 已将 openssl 等必要包内置于镜像 |
 | pnpm `packages field missing` | `pnpm-workspace.yaml` 格式不完整 | 确认 `packages: []` 存在 |
 | Windows 下 `prisma generate` 报 EPERM | dev server 锁了 native engine DLL | 先 `Ctrl+C` 停掉 dev server |
+
+---
+
+## 八、SSE（Server-Sent Events）消息推送规范
+
+> **强制规则**：项目中所有服务端到前端的消息推送或状态推送，**统一使用 SSE**，禁止使用轮询（`setInterval` + `fetch`）。
+
+### 8.1 为什么选择 SSE
+
+| 对比项 | 轮询 | SSE | WebSocket |
+|--------|------|-----|-----------|
+| 通信方向 | 客户端 → 服务端 | 服务端 → 客户端 | 双向 |
+| 无效请求 | 大量（每次完整 HTTP 请求/响应） | 零（状态不变不发数据） | 零 |
+| 实时性 | 取决于轮询间隔（1-2s 延迟） | < 0.5s | < 0.1s |
+| 实现复杂度 | 低 | 低 | 高（需额外库） |
+| 自动重连 | 无 | 浏览器原生 | 需手写 |
+| Next.js 兼容 | ✅ | ✅（ReadableStream） | ⚠️ 需自定义 server |
+
+**结论**：本项目所有推送场景都是"服务端 → 客户端"单向通信，SSE 是最佳选择。
+
+### 8.2 服务端实现规范
+
+SSE 端点放在 `src/app/api/<resource>/stream/route.ts`，使用 Next.js `ReadableStream` 响应：
+
+```typescript
+// src/app/api/<resource>/stream/route.ts
+import { NextRequest } from "next/server";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(request: NextRequest) {
+  const encoder = new TextEncoder();
+  let lastSent = "";
+  let intervalId: NodeJS.Timeout | null = null;
+
+  const stream = new ReadableStream({
+    start(controller) {
+      const send = (data: string) => {
+        try {
+          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+        } catch {
+          if (intervalId) clearInterval(intervalId);
+        }
+      };
+
+      // 首次连接发送确认
+      send(JSON.stringify({ type: "connected" }));
+
+      // 定期检查状态变化，仅变化时推送
+      intervalId = setInterval(() => {
+        const status = getSomeStatus(); // 获取当前状态
+        const payload = JSON.stringify({ ...status, type: "<event-type>" });
+        if (payload !== lastSent) {
+          lastSent = payload;
+          send(payload);
+        }
+      }, 500); // 内部检查频率可以高，无网络开销
+
+      // 客户端断开时清理
+      request.signal.addEventListener("abort", () => {
+        if (intervalId) clearInterval(intervalId);
+        try { controller.close(); } catch {}
+      });
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no", // Nginx 反向代理时禁用缓冲
+    },
+  });
+}
+```
+
+**关键要点**：
+- `export const dynamic = "force-dynamic"` — 禁止 Next.js 缓存响应
+- `lastSent` 去重 — 状态未变化时不推送，减少无效传输
+- `request.signal.abort` — 客户端断开时必须清理 interval 和关闭 stream
+- `X-Accel-Buffering: no` — Docker 部署时若有 Nginx 代理，防止事件被缓冲
+
+### 8.3 客户端实现规范
+
+使用浏览器原生 `EventSource` API：
+
+```typescript
+useEffect(() => {
+  const es = new EventSource("/api/<resource>/stream");
+
+  es.onmessage = (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      if (data.type === "connected") return; // 忽略连接确认
+      // 处理状态更新
+      setStatus(data);
+    } catch {}
+  };
+
+  es.onerror = () => {
+    // EventSource 会自动重连，此处可做额外处理
+    es.close();
+  };
+
+  return () => es.close(); // 组件卸载时关闭连接
+}, []);
+```
+
+**注意事项**：
+- `EventSource` 断线后会自动重连（默认 3 秒），无需手写重连逻辑
+- 组件卸载时必须 `es.close()`，否则连接泄漏
+- 如果 SSE 回调中需要读取最新的 React state，需用 `useRef` 桥接（因为 `EventSource` 回调捕获的是初始闭包）
+
+```typescript
+// useRef 桥接模式（SSE 回调中读取最新 state）
+const myStateRef = useRef(null);
+useEffect(() => { myStateRef.current = myState; }, [myState]);
+
+useEffect(() => {
+  const es = new EventSource("/api/xxx/stream");
+  es.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === "connected") return;
+    // ✅ 通过 ref 读取最新值
+    if (!data.isRunning && myStateRef.current) {
+      doSomething();
+    }
+  };
+  return () => es.close();
+}, []); // 空依赖，只建立一次连接
+```
+
+### 8.4 已有 SSE 端点
+
+| 端点 | 用途 | 消息类型 |
+|------|------|----------|
+| `GET /api/fetch/stream` | 爬虫拉取状态实时推送 | `fetch-status` |
+| `GET /api/fetch` (GET) | ⚠️ 已废弃，保留仅做兼容 | — |
+
+### 8.5 迁移检查清单
+
+将轮询改造为 SSE 时，需确认：
+
+- [ ] 新建 `stream/route.ts` 端点，遵循 8.2 规范
+- [ ] 前端删除 `setInterval` + `fetch` 轮询代码
+- [ ] 前端使用 `EventSource` 替代，遵循 8.3 规范
+- [ ] SSE 回调中如需读取 React state，使用 `useRef` 桥接
+- [ ] 组件卸载时 `es.close()`
+- [ ] 更新本文档 8.4 节的端点列表

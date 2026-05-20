@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ import {
   Cloud,
   Sparkles,
   ShieldCheck,
+  Bell,
 } from "lucide-react";
 
 const navItems = [
@@ -24,11 +26,28 @@ const navItems = [
   { href: "/wordcloud", label: "评价词云", icon: Cloud },
   { href: "/ai-report", label: "AI 周报", icon: Sparkles },
   { href: "/track-match", label: "评价溯源", icon: ShieldCheck },
+  { href: "/alerts", label: "评价预警", icon: Bell },
   { href: "/settings", label: "系统设置", icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const es = new EventSource("/api/alerts/stream");
+    es.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type === "alert-count") {
+          setUnreadCount(data.unreadCount);
+        }
+      } catch {}
+    };
+    es.onerror = () => es.close();
+
+    return () => es.close();
+  }, []);
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-56 border-r bg-card">
@@ -54,6 +73,11 @@ export function Sidebar() {
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
+                {item.href === "/alerts" && unreadCount > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}

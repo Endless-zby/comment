@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Star, Image, MessageCircle, RefreshCw, ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { Star, Image, MessageCircle, RefreshCw, ChevronLeft, ChevronRight, Download, Sparkles, Loader2, Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Review {
@@ -54,6 +54,61 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, pageSize: 20, total: 0, totalPages: 0 });
+
+  const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [replyReviewId, setReplyReviewId] = useState<number | null>(null);
+  const [replyStyle, setReplyStyle] = useState("professional");
+  const [replyTags, setReplyTags] = useState("");
+  const [replyText, setReplyText] = useState("");
+  const [replyGenerating, setReplyGenerating] = useState(false);
+  const [replyError, setReplyError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const REPLY_STYLES = [
+    { label: "专业正式", value: "professional" },
+    { label: "亲切温暖", value: "friendly" },
+    { label: "简短有力", value: "brief" },
+  ];
+
+  const openReplyModal = (reviewId: number) => {
+    setReplyReviewId(reviewId);
+    setReplyText("");
+    setReplyError("");
+    setReplyTags("");
+    setCopied(false);
+    setReplyModalOpen(true);
+  };
+
+  const handleGenerateReply = async () => {
+    if (!replyReviewId) return;
+    setReplyGenerating(true);
+    setReplyError("");
+    setReplyText("");
+    setCopied(false);
+    try {
+      const res = await fetch("/api/reviews/reply-suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewId: replyReviewId, style: replyStyle, tags: replyTags }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReplyText(data.reply);
+      } else {
+        setReplyError(data.error || "生成失败");
+      }
+    } catch {
+      setReplyError("网络错误");
+    } finally {
+      setReplyGenerating(false);
+    }
+  };
+
+  const handleCopyReply = () => {
+    navigator.clipboard.writeText(replyText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     loadHotels();
@@ -356,7 +411,18 @@ export default function ReviewsPage() {
                       )}
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>评价者: {review.reviewer || "匿名"}</span>
-                        <span>ID: {review.commentId}</span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                            onClick={() => openReplyModal(review.id)}
+                          >
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            AI回复
+                          </Button>
+                          <span>ID: {review.commentId}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -397,6 +463,105 @@ export default function ReviewsPage() {
           </Card>
         )}
       </div>
+
+      {replyModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card rounded-lg shadow-lg w-full max-w-lg mx-4 p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-500" />
+                AI 回复建议
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setReplyModalOpen(false)}
+              >
+                ✕
+              </Button>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">回复风格</label>
+              <div className="flex gap-2">
+                {REPLY_STYLES.map((s) => (
+                  <Button
+                    key={s.value}
+                    variant={replyStyle === s.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      setReplyStyle(s.value);
+                      setReplyText("");
+                    }}
+                  >
+                    {s.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">回复重点标签 <span className="text-muted-foreground font-normal">(可选，如：卫生问题、退款处理、噪音扰民)</span></label>
+              <Input
+                placeholder="输入标签，多个用逗号分隔"
+                value={replyTags}
+                onChange={(e) => setReplyTags(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            <Button
+              onClick={handleGenerateReply}
+              disabled={replyGenerating}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              {replyGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  AI 生成中...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  生成回复建议
+                </>
+              )}
+            </Button>
+
+            {replyError && (
+              <p className="text-sm text-red-500">{replyError}</p>
+            )}
+
+            {replyText && (
+              <div className="space-y-2">
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    {replyText}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={handleCopyReply}
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2 text-green-500" />
+                      已复制到剪贴板
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      一键复制
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }

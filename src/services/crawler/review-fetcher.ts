@@ -277,7 +277,7 @@ export async function fetchReviews(
     });
 
     console.log(`[Fetcher] 保存 ${allReviews.length} 条新评价...`);
-    await saveReviews(allReviews, hotelId, configId);
+    await saveReviews(allReviews, hotelId, configId, hotelName);
 
     await prisma.config.update({
       where: { id: configId },
@@ -450,7 +450,7 @@ export async function fetchCtripReviewsByApi(
     });
 
     console.log(`[Ctrip API] 保存 ${allReviews.length} 条新评价...`);
-    await saveReviews(allReviews, hotelId, configId);
+    await saveReviews(allReviews, hotelId, configId, hotelName);
 
     await prisma.config.update({
       where: { id: configId },
@@ -555,11 +555,12 @@ function parseCommentListResponse(json: any): CtripReviewData[] {
 async function saveReviews(
   reviews: CtripReviewData[],
   hotelId: number,
-  configId: number
+  configId: number,
+  hotelName: string
 ): Promise<void> {
   for (const review of reviews) {
     try {
-      await prisma.review.create({
+      const saved = await prisma.review.create({
         data: {
           hotelId,
           configId,
@@ -577,6 +578,20 @@ async function saveReviews(
           rawJson: JSON.stringify(review.rawJson),
         },
       });
+
+      if (review.rating < 3) {
+        await prisma.alert.create({
+          data: {
+            hotelId,
+            reviewId: saved.id,
+            hotelName,
+            platform: "ctrip",
+            rating: review.rating,
+            content: (review.content || "").substring(0, 200),
+          },
+        });
+        console.log(`[Fetch] 差评预警: ${review.rating}星 - ${(review.content || "").substring(0, 50)}`);
+      }
     } catch (error: any) {
       if (error.code !== "P2002") {
         console.error("Failed to save review:", error);

@@ -109,7 +109,7 @@ interface Hotel {
 }
 
 export default function StatsPage() {
-  const [selectedHotelId, setSelectedHotelId] = useState("all");
+  const [selectedHotelId, setSelectedHotelId] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -126,12 +126,12 @@ export default function StatsPage() {
   }, []);
 
   useEffect(() => {
-    loadStats();
+    if (selectedHotelId !== "") loadStats();
   }, [selectedHotelId, selectedPlatform]);
 
   const getParams = () => {
     const params = new URLSearchParams();
-    if (selectedHotelId !== "all") params.set("hotelId", selectedHotelId);
+    if (selectedHotelId && selectedHotelId !== "all") params.set("hotelId", selectedHotelId);
     if (selectedPlatform !== "all") params.set("platform", selectedPlatform);
     return params.toString();
   };
@@ -139,7 +139,13 @@ export default function StatsPage() {
   const loadHotels = async () => {
     try {
       const res = await fetch("/api/hotels");
-      if (res.ok) setHotels(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setHotels(data);
+        if (data.length > 0 && !selectedHotelId) {
+          setSelectedHotelId(String(data[0].id));
+        }
+      }
     } catch (err) {
       console.error("加载酒店失败:", err);
     }

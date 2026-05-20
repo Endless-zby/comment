@@ -206,9 +206,9 @@ function parseFliggyCommentResponse(json: any): FliggyReviewData[] {
   return reviews;
 }
 
-async function saveReviews(reviews: FliggyReviewData[], hotelId: number, configId: number) {
+async function saveReviews(reviews: FliggyReviewData[], hotelId: number, configId: number, hotelName: string) {
   for (const review of reviews) {
-    await prisma.review.create({
+    const saved = await prisma.review.create({
       data: {
         hotelId,
         configId,
@@ -226,6 +226,20 @@ async function saveReviews(reviews: FliggyReviewData[], hotelId: number, configI
         rawJson: JSON.stringify(review.rawJson),
       },
     });
+
+    if (review.rating < 3) {
+      await prisma.alert.create({
+        data: {
+          hotelId,
+          reviewId: saved.id,
+          hotelName,
+          platform: "fliggy",
+          rating: review.rating,
+          content: (review.content || "").substring(0, 200),
+        },
+      });
+      console.log(`[Fliggy] 差评预警: ${review.rating}星 - ${(review.content || "").substring(0, 50)}`);
+    }
   }
 }
 
@@ -260,28 +274,55 @@ export async function fetchFliggyReviews(
 
     const globalCookie = await getGlobalFliggyCookie();
     if (globalCookie) {
+      console.log("[Fliggy] 注入飞猪Cookie...");
       try {
-        const cookies = JSON.parse(globalCookie);
-        if (Array.isArray(cookies) && cookies.length > 0) {
-          console.log("[Fliggy] 从全局设置加载 Cookie...");
-          const browser = await getBrowser("stealth");
-          await browser.setCookie(...cookies);
+        const cookieObj = JSON.parse(globalCookie);
+        if (Array.isArray(cookieObj) && cookieObj.length > 0) {
+          const cookies = cookieObj.map((c: any) => ({
+            name: c.name,
+            value: c.value,
+            domain: c.domain || ".alitrip.com",
+            path: c.path || "/",
+          }));
+          await page.setCookie(...cookies);
+        } else {
+          const cookies = globalCookie.split(";").map((pair: string) => {
+            const [name, ...rest] = pair.trim().split("=");
+            return {
+              name: name.trim(),
+              value: rest.join("=").trim(),
+              domain: ".alitrip.com",
+              path: "/",
+            };
+          }).filter((c: any) => c.name && c.value);
+          await page.setCookie(...cookies);
         }
-      } catch (err) {
-        console.log("[Fliggy] Cookie 解析失败，尝试从文件加载");
+      } catch (cookieErr: any) {
+        console.log(`[Fliggy] Cookie注入失败: ${cookieErr.message}`);
         const savedCookies = await loadCookies();
         if (savedCookies && savedCookies.length > 0) {
           console.log("[Fliggy] 加载保存的cookies...");
-          const browser = await getBrowser("stealth");
-          await browser.setCookie(...savedCookies);
+          const cookies = savedCookies.map((c: any) => ({
+            name: c.name,
+            value: c.value,
+            domain: c.domain || ".alitrip.com",
+            path: c.path || "/",
+          }));
+          await page.setCookie(...cookies);
         }
       }
     } else {
+      console.log("[Fliggy] 未配置飞猪Cookie，可能需要扫码登录");
       const savedCookies = await loadCookies();
       if (savedCookies && savedCookies.length > 0) {
         console.log("[Fliggy] 加载保存的cookies...");
-        const browser = await getBrowser("stealth");
-        await browser.setCookie(...savedCookies);
+        const cookies = savedCookies.map((c: any) => ({
+          name: c.name,
+          value: c.value,
+          domain: c.domain || ".alitrip.com",
+          path: c.path || "/",
+        }));
+        await page.setCookie(...cookies);
       }
     }
 
@@ -440,7 +481,7 @@ export async function fetchFliggyReviews(
     });
 
     console.log(`[Fliggy] 保存 ${allReviews.length} 条新评价...`);
-    await saveReviews(allReviews, hotelId, configId);
+    await saveReviews(allReviews, hotelId, configId, hotelName);
 
     await prisma.config.update({
       where: { id: configId },
@@ -652,7 +693,7 @@ export async function fetchFliggyReviewsByApi(
     });
 
     console.log(`[Fliggy API] 保存 ${allReviews.length} 条新评价...`);
-    await saveReviews(allReviews, hotelId, configId);
+    await saveReviews(allReviews, hotelId, configId, hotelName);
 
     await prisma.config.update({
       where: { id: configId },

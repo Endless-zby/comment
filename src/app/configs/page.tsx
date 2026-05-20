@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AppLayout } from "@/components/layout/app-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,10 +57,32 @@ export default function ConfigsPage() {
   const [fetchModeInput, setFetchModeInput] = useState("incremental");
   const [error, setError] = useState("");
 
+  const fetchingConfigIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    fetchingConfigIdRef.current = fetchingConfigId;
+  }, [fetchingConfigId]);
+
   useEffect(() => {
     loadData();
-    const interval = setInterval(checkFetchStatus, 2000);
-    return () => clearInterval(interval);
+
+    const es = new EventSource("/api/fetch/stream");
+    es.onmessage = (e) => {
+      try {
+        const status = JSON.parse(e.data);
+        if (status.type === "connected") return;
+        setFetchStatus(status);
+
+        if (!status.isRunning && fetchingConfigIdRef.current) {
+          setFetchingConfigId(null);
+          setFetchingPlatform(null);
+          setFetchingMode(null);
+          loadData();
+        }
+      } catch {}
+    };
+    es.onerror = () => es.close();
+
+    return () => es.close();
   }, []);
 
   const loadData = async () => {
@@ -84,25 +106,6 @@ export default function ConfigsPage() {
       console.error("加载失败:", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const checkFetchStatus = async () => {
-    try {
-      const res = await fetch("/api/fetch");
-      if (res.ok) {
-        const status = await res.json();
-        setFetchStatus(status);
-        
-        if (!status.isRunning && fetchingConfigId) {
-          setFetchingConfigId(null);
-          setFetchingPlatform(null);
-          setFetchingMode(null);
-          loadData();
-        }
-      }
-    } catch (err) {
-      console.error("检查状态失败:", err);
     }
   };
 

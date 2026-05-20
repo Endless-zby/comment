@@ -25,6 +25,7 @@ model Hotel {
   reviews        Review[]
   fetchLogs      FetchLog[]
   aiReport       AiReport?
+  alerts         Alert[]
 
   @@index([ctripHotelId])
   @@index([fliggyHotelId])
@@ -127,4 +128,22 @@ model AiReport {
 
   @@unique([hotelId])
   @@map("ai_reports")
+}
+
+model Alert {
+  id            Int       @id @default(autoincrement())
+  hotelId       Int       @map("hotel_id")
+  reviewId      Int       @map("review_id")
+  hotelName     String    @map("hotel_name")
+  platform      String    @default("ctrip")
+  rating        Float
+  content       String?
+  isRead        Boolean   @default(false) @map("is_read")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  hotel         Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@index([hotelId, isRead])
+  @@index([createdAt(sort: Desc)])
+  @@map("alerts")
 }
