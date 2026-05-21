@@ -285,7 +285,7 @@ export async function fetchReviews(
         lastFetchedAt: new Date(),
         lastFetchedPage: 1,
         totalFetched: allReviews.length,
-      },
+      }, 
     });
 
     await prisma.fetchLog.create({
