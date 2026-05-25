@@ -102,7 +102,7 @@ export async function getBrowser(mode: "normal" | "stealth" = "normal"): Promise
   const puppeteer = mode === "stealth" ? puppeteerExtra : puppeteerBase;
   
   const isDocker = process.env.NODE_ENV === "production" || process.env.PUPPETEER_EXECUTABLE_PATH;
-  const headless: boolean | "shell" = isDocker ? true : false;
+  const headless: boolean | "shell" = true;
   const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || undefined;
   
   browser = await puppeteer.launch({
