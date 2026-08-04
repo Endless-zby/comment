@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { addJob } from "@/services/scheduler";
 
 export async function GET(request: NextRequest) {
   try {
@@ -37,6 +38,11 @@ export async function POST(request: NextRequest) {
       },
       include: { hotel: true },
     });
+
+    if (config.isActive) {
+      addJob(config.id);
+    }
+
     return NextResponse.json(config, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "创建配置失败" }, { status: 500 });

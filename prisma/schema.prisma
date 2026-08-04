@@ -147,3 +147,84 @@ model Alert {
   @@index([createdAt(sort: Desc)])
   @@map("alerts")
 }
+
+model User {
+  id                Int           @id @default(autoincrement())
+  accountType       String        @default("web") @map("account_type")
+  username          String?       @unique
+  passwordHash      String?       @map("password_hash")
+  wechatOpenid      String?       @unique @map("wechat_openid")
+  wechatUnionId     String?       @map("wechat_union_id")
+  miniProgramOpenid String?       @unique @map("mini_program_openid")
+  nickname          String?
+  avatarUrl         String?       @map("avatar_url")
+  status            String        @default("pending")
+  roleId            Int?          @map("role_id")
+  approvedAt        DateTime?     @map("approved_at")
+  approvedBy        Int?          @map("approved_by")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  role              Role?         @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  sessions          AuthSession[]
+
+  @@index([status])
+  @@index([roleId])
+  @@map("users")
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  isAdmin     Boolean          @default(false) @map("is_admin")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  users       User[]
+  permissions PagePermission[]
+
+  @@map("roles")
+}
+
+model PagePermission {
+  id        Int      @id @default(autoincrement())
+  roleId    Int      @map("role_id")
+  pageKey   String   @map("page_key")
+  canAccess Boolean  @default(true) @map("can_access")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, pageKey])
+  @@index([pageKey])
+  @@map("page_permissions")
+}
+
+model AuditLog {
+  id           Int      @id @default(autoincrement())
+  operatorId   Int?     @map("operator_id")
+  targetUserId Int?     @map("target_user_id")
+  action       String
+  payload      String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([operatorId])
+  @@index([targetUserId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model AuthSession {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  tokenHash String   @unique @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}

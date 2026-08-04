@@ -6,9 +6,19 @@ import { createLogger } from "../logger";
 
 const log = createLogger("Scheduler");
 const jobs = new Map<number, cron.ScheduledTask>();
+let schedulerStarted = false;
 
 export function startScheduler(): void {
-  loadActiveConfigs();
+  if (schedulerStarted) {
+    return;
+  }
+
+  schedulerStarted = true;
+  loadActiveConfigs().catch((err: unknown) => {
+    schedulerStarted = false;
+    const message = err instanceof Error ? err.message : String(err);
+    log.error(`Failed to start scheduler: ${message}`);
+  });
 }
 
 async function loadActiveConfigs(): Promise<void> {
